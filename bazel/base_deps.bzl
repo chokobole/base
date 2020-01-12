@@ -31,3 +31,35 @@ def base_deps():
                 "https://github.com/google/googletest/archive/997d343dd680e541ef96ce71ee54a91daf2577a0.zip",
             ],
         )
+
+    # Needed by com_github_google_glog
+    if not native.existing_rule("com_github_gflags_gflags"):
+        http_archive(
+            name = "com_github_gflags_gflags",
+            strip_prefix = "gflags-2.2.2",
+            urls = [
+                "https://mirror.bazel.build/github.com/gflags/gflags/archive/v2.2.2.tar.gz",
+                "https://github.com/gflags/gflags/archive/v2.2.2.tar.gz",
+            ],
+        )
+
+    if not native.existing_rule("com_github_google_glog"):
+        http_archive(
+            name = "com_github_google_glog",
+            sha256 = "ba51f089471fa4084e1d073dfb4a0fc81679f1d016faa58aefde5738345fee93",
+            strip_prefix = "glog-130a3e10de248344cdaeda54aed4c8a5ad7cedac",
+            urls = [
+                "https://github.com/google/glog/archive/130a3e10de248344cdaeda54aed4c8a5ad7cedac.zip",
+            ],
+        )
+
+    if not native.existing_rule("com_github_libevent_libevent"):
+        http_archive(
+            name = "com_github_libevent_libevent",
+            sha256 = "dffa4e78139a6f927edc6396c9c54d1aa4dbf8413e537863c59b179d7beabdd0",
+            strip_prefix = "libevent-release-2.1.11-stable",
+            urls = [
+                "https://github.com/libevent/libevent/archive/release-2.1.11-stable.zip",
+            ],
+            build_file = "@//third_party/libevent:libevent.BUILD",
+        )
