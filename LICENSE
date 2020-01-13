@@ -31,6 +31,9 @@ them under the BSD-3-Clause license above.  The copyright notices are
 available in the corresponding source files; the license is as above.  Here's
 a list:
 
+base/build_config.h:
+  Copyright (c) 2012 The Chromium Authors.
+
 base/no_destructor.h:
   Copyright 2018 The Chromium Authors.
 

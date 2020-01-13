@@ -7,6 +7,12 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "build_config",
+    hdrs = ["build_config.h"],
+    visibility = ["//visibility:public"],
+)
+
+base_cc_library(
     name = "export",
     hdrs = ["export.h"],
     visibility = ["//visibility:public"],
