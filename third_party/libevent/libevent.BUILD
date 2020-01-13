@@ -61,6 +61,9 @@ genrule(
             "mkdir build && cd build",
             "cmake " +
             "-DCMAKE_INSTALL_PREFIX=$$INSTALL_DIR " +
+            "-DCMAKE_GENERATOR_PLATFORM=x64 " +
+            "-DCMAKE_CL_64=1" +
+            "-Ax64 " +
             "-DEVENT__DISABLE_OPENSSL=ON " +
             "-DEVENT__DISABLE_THREAD_SUPPORT=OFF " +
             "-DEVENT__LIBRARY_TYPE=STATIC " +
