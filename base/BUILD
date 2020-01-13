@@ -26,6 +26,12 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "macros",
+    hdrs = ["macros.h"],
+    visibility = ["//visibility:public"],
+)
+
+base_cc_library(
     name = "no_destructor",
     hdrs = ["no_destructor.h"],
     visibility = ["//visibility:public"],

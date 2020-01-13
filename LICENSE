@@ -34,9 +34,12 @@ a list:
 base/build_config.h:
   Copyright (c) 2012 The Chromium Authors.
 
+base/macros.h:
+  Copyright 2014 The Chromium Authors.
+
 base/no_destructor.h:
   Copyright 2018 The Chromium Authors.
 
-base/event_loop/event_loop.h:
 base/event_loop/event_loop.cc:
+base/event_loop/event_loop.h:
   Copyright (c) 2012 The Chromium Authors.
