@@ -72,6 +72,8 @@ class BASE_EXPORT EventLoop {
 
   EventLoop();
   ~EventLoop();
+  EventLoop(const EventLoop& other) = delete;
+  EventLoop& operator=(const EventLoop& other) = delete;
 
   void Run(Delegate* delegate);
 
