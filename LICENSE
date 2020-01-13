@@ -32,6 +32,7 @@ available in the corresponding source files; the license is as above.  Here's
 a list:
 
 base/build_config.h:
+base/compiler_specific.h:
   Copyright (c) 2012 The Chromium Authors.
 
 base/macros.h:

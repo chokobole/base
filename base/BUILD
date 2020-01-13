@@ -13,6 +13,13 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "compiler_specific",
+    hdrs = ["compiler_specific.h"],
+    visibility = ["//visibility:public"],
+    deps = [":build_config"],
+)
+
+base_cc_library(
     name = "export",
     hdrs = ["export.h"],
     visibility = ["//visibility:public"],
