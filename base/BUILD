@@ -8,10 +8,15 @@ base_cc_library(
 
 base_cc_library(
     name = "export",
-    hdrs = [
-        "export.h",
-    ],
+    hdrs = ["export.h"],
     visibility = ["//visibility:public"],
+)
+
+base_cc_library(
+    name = "logging",
+    hdrs = ["logging.h"],
+    visibility = ["//visibility:public"],
+    deps = ["@com_github_google_glog//:glog"],
 )
 
 base_cc_library(

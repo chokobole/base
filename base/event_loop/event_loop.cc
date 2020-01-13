@@ -11,8 +11,7 @@
 #include "base/auto_reset.h"
 #include "event2/event_compat.h"
 #include "event2/event_struct.h"
-#define GLOG_NO_ABBREVIATED_SEVERITIES
-#include "glog/logging.h"
+#include "base/logging.h"
 
 namespace base {
 
@@ -142,7 +141,7 @@ bool EventLoop::WatchFileDescriptor(int fd, bool persistent, int mode,
     // It's illegal to use this function to listen on 2 separate fds with the
     // same |controller|.
     if (event_get_fd(evt.get()) != fd) {
-      CHECK(false) << "FDs don't match" << event_get_fd(evt.get())
+      NOTREACHED() << "FDs don't match" << event_get_fd(evt.get())
                    << "!=" << fd;
       return false;
     }
@@ -153,13 +152,13 @@ bool EventLoop::WatchFileDescriptor(int fd, bool persistent, int mode,
 
   // Tell libevent which message pump this socket will belong to when we add it.
   if (event_base_set(event_base_, evt.get())) {
-    PLOG(ERROR) << "event_base_set(fd=" << event_get_fd(evt.get()) << ")";
+    DPLOG(ERROR) << "event_base_set(fd=" << event_get_fd(evt.get()) << ")";
     return false;
   }
 
   // Add this socket to the list of monitored sockets.
   if (event_add(evt.get(), nullptr)) {
-    PLOG(ERROR) << "event_add failed(fd=" << event_get_fd(evt.get()) << ")";
+    DPLOG(ERROR) << "event_add failed(fd=" << event_get_fd(evt.get()) << ")";
     return false;
   }
 

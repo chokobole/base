@@ -12,7 +12,7 @@ base_cc_library(
     deps = [
         "//base:auto_reset",
         "//base:export",
-        "@com_github_google_glog//:glog",
+        "//base:logging",
         "@com_github_libevent_libevent//:libevent",
     ],
 )
