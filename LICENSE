@@ -31,16 +31,24 @@ them under the BSD-3-Clause license above.  The copyright notices are
 available in the corresponding source files; the license is as above.  Here's
 a list:
 
+base/auto_reset.h:
+  Copyright (c) 2011 The Chromium Authors.
+
 base/build_config.h:
 base/compiler_specific.h:
+base/sys_byteorder.h:
+base/event_loop/event_loop.cc:
+base/event_loop/event_loop.h:
   Copyright (c) 2012 The Chromium Authors.
 
 base/macros.h:
   Copyright 2014 The Chromium Authors.
 
+base/sys_byteorder_unittest.cc:
+  Copyright (c) 2016 The Chromium Authors.
+
 base/no_destructor.h:
   Copyright 2018 The Chromium Authors.
 
-base/event_loop/event_loop.cc:
-base/event_loop/event_loop.h:
-  Copyright (c) 2012 The Chromium Authors.
+base/auto_reset_unittest.cc:
+  Copyright 2019 The Chromium Authors.

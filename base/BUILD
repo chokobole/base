@@ -20,6 +20,17 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "data_view",
+    srcs = ["data_view.cc"],
+    hdrs = ["data_view.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":export",
+        ":sys_byteorder",
+    ],
+)
+
+base_cc_library(
     name = "export",
     hdrs = ["export.h"],
     visibility = ["//visibility:public"],
@@ -44,13 +55,27 @@ base_cc_library(
     visibility = ["//visibility:public"],
 )
 
+base_cc_library(
+    name = "sys_byteorder",
+    hdrs = ["sys_byteorder.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":build_config",
+        ":logging",
+    ],
+)
+
 base_cc_test(
     name = "base_unittests",
     srcs = [
         "auto_reset_unittest.cc",
+        "data_view_unittest.cc",
+        "sys_byteorder_unittest.cc",
     ],
     deps = [
         ":auto_reset",
+        ":data_view",
+        ":sys_byteorder",
         "@com_google_googletest//:gtest_main",
     ],
 )
