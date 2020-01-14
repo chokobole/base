@@ -32,6 +32,8 @@ available in the corresponding source files; the license is as above.  Here's
 a list:
 
 base/auto_reset.h:
+base/stl_util.h:
+base/template_util.h:
   Copyright (c) 2011 The Chromium Authors.
 
 base/build_config.h:

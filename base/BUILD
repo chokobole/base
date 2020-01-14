@@ -56,12 +56,31 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "stl_util",
+    hdrs = ["stl_util.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":template_util",
+        "@com_google_absl//absl/types:optional",
+    ],
+)
+
+base_cc_library(
     name = "sys_byteorder",
     hdrs = ["sys_byteorder.h"],
     visibility = ["//visibility:public"],
     deps = [
         ":build_config",
         ":logging",
+    ],
+)
+
+base_cc_library(
+    name = "template_util",
+    hdrs = ["template_util.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":build_config",
     ],
 )
 
