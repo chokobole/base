@@ -31,6 +31,12 @@ them under the BSD-3-Clause license above.  The copyright notices are
 available in the corresponding source files; the license is as above.  Here's
 a list:
 
+base/socket/sys_addrinfo.h:
+  Copyright (c) 2009 The Chromium Authors.
+
+base/socket/address_family.h:
+  Copyright (c) 2010 The Chromium Authors.
+
 base/auto_reset.h:
 base/stl_util.h:
 base/template_util.h:
@@ -39,15 +45,35 @@ base/template_util.h:
 base/build_config.h:
 base/compiler_specific.h:
 base/sys_byteorder.h:
+base/containers/stack_container.h:
 base/event_loop/event_loop.cc:
 base/event_loop/event_loop.h:
+base/socket/ip_endpoint.cc:
+base/socket/ip_endpoint.h:
+base/socket/ip_endpoint_unittest.cc:
   Copyright (c) 2012 The Chromium Authors.
+
+base/socket/socket_dsecriptor.cc:
+base/socket/socket_dsecriptor.h:
+  Copyright 2013 The Chromium Authors.
 
 base/macros.h:
   Copyright 2014 The Chromium Authors.
 
+base/socket/ip_address.cc:
+base/socket/ip_address.h:
+base/socket/ip_address_unittest.cc:
+  Copyright (c) 2015 The Chromium Authors.
+
+base/socket/address_family.cc:
+  Copyright 2015 The Chromium Authors.
+
 base/sys_byteorder_unittest.cc:
   Copyright (c) 2016 The Chromium Authors.
+
+base/sockaddr_storage.cc:
+base/sockaddr_storage.h:
+  Copyright 2016 The Chromium Authors.
 
 base/no_destructor.h:
   Copyright 2018 The Chromium Authors.
