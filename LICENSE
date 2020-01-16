@@ -38,12 +38,14 @@ base/socket/address_family.h:
   Copyright (c) 2010 The Chromium Authors.
 
 base/auto_reset.h:
+base/io_buffer.cc:
 base/stl_util.h:
 base/template_util.h:
   Copyright (c) 2011 The Chromium Authors.
 
 base/build_config.h:
 base/compiler_specific.h:
+base/io_buffer.h:
 base/sys_byteorder.h:
 base/containers/stack_container.h:
 base/event_loop/event_loop.cc:

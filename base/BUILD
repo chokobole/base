@@ -50,6 +50,18 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "io_buffer",
+    srcs = ["io_buffer.cc"],
+    hdrs = ["io_buffer.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":export",
+        ":free_deleter",
+        ":logging",
+    ],
+)
+
+base_cc_library(
     name = "macros",
     hdrs = ["macros.h"],
     visibility = ["//visibility:public"],
