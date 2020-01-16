@@ -49,7 +49,7 @@ const uint16_t* GetPortFieldFromSockaddr(const struct sockaddr* address,
 int GetPortFromSockaddr(const struct sockaddr* address, socklen_t address_len) {
   const uint16_t* port_field = GetPortFieldFromSockaddr(address, address_len);
   if (!port_field) return -1;
-  return base::NetToHost16(*port_field);
+  return NetToHost16(*port_field);
 }
 
 struct TestData {
@@ -201,7 +201,7 @@ TEST_F(IPEndPointTest, ToString) {
     ++port;
     IPEndPoint endpoint(test.ip_address, port);
     const std::string result = endpoint.ToString();
-    EXPECT_EQ(test.host_normalized + ":" + base::NumberToString(port), result);
+    EXPECT_EQ(test.host_normalized + ":" + NumberToString(port), result);
   }
 
   // ToString() shouldn't crash on invalid addresses.

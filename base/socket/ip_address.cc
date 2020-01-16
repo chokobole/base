@@ -162,7 +162,7 @@ bool DoParseIPv4LiteralToBytes(absl::string_view ip_literal,
 
 bool DoParseIPv6LiteralToBytes(absl::string_view ip_literal,
                                IPAddressBytes* bytes) {
-  base::StackVector<uint8_t, 16> nums;
+  StackVector<uint8_t, 16> nums;
   size_t double_colon_idx = std::numeric_limits<size_t>::max();
   size_t cur = 0;
   while (cur < ip_literal.length()) {
@@ -526,7 +526,7 @@ IPAddress ConvertIPv4ToIPv4MappedIPv6(const IPAddress& address) {
   DCHECK(address.IsIPv4());
   // IPv4-mapped addresses are formed by:
   // <80 bits of zeros>  + <16 bits of ones> + <32-bit IPv4 address>.
-  base::StackVector<uint8_t, 16> bytes;
+  StackVector<uint8_t, 16> bytes;
   bytes->insert(bytes->end(), std::begin(kIPv4MappedPrefix),
                 std::end(kIPv4MappedPrefix));
   bytes->insert(bytes->end(), address.bytes().begin(), address.bytes().end());
@@ -536,9 +536,8 @@ IPAddress ConvertIPv4ToIPv4MappedIPv6(const IPAddress& address) {
 IPAddress ConvertIPv4MappedIPv6ToIPv4(const IPAddress& address) {
   DCHECK(address.IsIPv4MappedIPv6());
 
-  base::StackVector<uint8_t, 16> bytes;
-  bytes->insert(bytes->end(),
-                address.bytes().begin() + base::size(kIPv4MappedPrefix),
+  StackVector<uint8_t, 16> bytes;
+  bytes->insert(bytes->end(), address.bytes().begin() + size(kIPv4MappedPrefix),
                 address.bytes().end());
   return IPAddress(bytes->data(), bytes->size());
 }

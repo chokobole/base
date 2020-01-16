@@ -24,7 +24,7 @@ std::string DumpIPAddress(const IPAddress& v) {
   std::string out;
   for (size_t i = 0; i < v.bytes().size(); ++i) {
     if (i != 0) out.append(",");
-    out.append(base::NumberToString(v.bytes()[i]));
+    out.append(NumberToString(v.bytes()[i]));
   }
   return out;
 }
@@ -36,27 +36,27 @@ TEST(IPAddressBytesTest, ConstructEmpty) {
 
 TEST(IPAddressBytesTest, ConstructIPv4) {
   uint8_t data[] = {192, 168, 1, 1};
-  IPAddressBytes bytes(data, base::size(data));
-  ASSERT_EQ(base::size(data), bytes.size());
+  IPAddressBytes bytes(data, size(data));
+  ASSERT_EQ(size(data), bytes.size());
   size_t i = 0;
   for (uint8_t byte : bytes) EXPECT_EQ(data[i++], byte);
-  ASSERT_EQ(base::size(data), i);
+  ASSERT_EQ(size(data), i);
 }
 
 TEST(IPAddressBytesTest, ConstructIPv6) {
   uint8_t data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-  IPAddressBytes bytes(data, base::size(data));
-  ASSERT_EQ(base::size(data), bytes.size());
+  IPAddressBytes bytes(data, size(data));
+  ASSERT_EQ(size(data), bytes.size());
   size_t i = 0;
   for (uint8_t byte : bytes) EXPECT_EQ(data[i++], byte);
-  ASSERT_EQ(base::size(data), i);
+  ASSERT_EQ(size(data), i);
 }
 
 TEST(IPAddressBytesTest, Assign) {
   uint8_t data[] = {192, 168, 1, 1};
   IPAddressBytes copy;
-  copy.Assign(data, base::size(data));
-  EXPECT_EQ(IPAddressBytes(data, base::size(data)), copy);
+  copy.Assign(data, size(data));
+  EXPECT_EQ(IPAddressBytes(data, size(data)), copy);
 }
 
 TEST(IPAddressTest, ConstructIPv4) {

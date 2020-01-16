@@ -58,7 +58,7 @@ bool ConsumeASCIIWhitespace(absl::string_view* text,
 }
 
 const std::string& EmptyString() {
-  static const base::NoDestructor<std::string> s;
+  static const NoDestructor<std::string> s;
   return *s;
 }
 
