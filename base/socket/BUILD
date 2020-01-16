@@ -60,6 +60,26 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "socket_errors",
+    srcs = if_windows(
+        [
+            "socket_errors_win.cc",
+        ],
+        [
+            "socket_errors_posix.cc",
+        ],
+    ),
+    hdrs = ["socket_errors.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//base:build_config",
+        "//base:export",
+        "//base:logging",
+        "//base:system_error_code",
+    ],
+)
+
+base_cc_library(
     name = "sys_addrinfo",
     hdrs = ["sys_addrinfo.h"],
     visibility = ["//visibility:public"],

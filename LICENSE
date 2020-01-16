@@ -41,6 +41,8 @@ base/auto_reset.h:
 base/io_buffer.cc:
 base/stl_util.h:
 base/template_util.h:
+base/socket/socket_errors_posix.cc:
+base/socket/socket_errors_win.cc:
   Copyright (c) 2011 The Chromium Authors.
 
 base/build_config.h:
@@ -54,6 +56,7 @@ base/event_loop/event_loop.h:
 base/socket/ip_endpoint.cc:
 base/socket/ip_endpoint.h:
 base/socket/ip_endpoint_unittest.cc:
+base/socket/socket_errors.h:
   Copyright (c) 2012 The Chromium Authors.
 
 base/socket/socket_dsecriptor.cc:
