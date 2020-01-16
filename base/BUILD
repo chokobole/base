@@ -97,6 +97,21 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "system_error_code",
+    srcs = ["system_error_code.cc"],
+    hdrs = ["system_error_code.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":build_config",
+        ":export",
+        ":logging",
+        ":stl_util",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/strings:str_format",
+    ],
+)
+
+base_cc_library(
     name = "sys_byteorder",
     hdrs = ["sys_byteorder.h"],
     visibility = ["//visibility:public"],
