@@ -9,9 +9,9 @@
 #include "base/event_loop/event_loop.h"
 
 #include "base/auto_reset.h"
+#include "base/logging.h"
 #include "event2/event_compat.h"
 #include "event2/event_struct.h"
-#include "base/logging.h"
 
 namespace base {
 

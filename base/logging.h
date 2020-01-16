@@ -16,9 +16,9 @@
 
 #else  // !DCHECK_IS_ON()
 
-#define DPLOG(severity)  \
+#define DPLOG(severity) \
   static_cast<void>(0), \
-  true ? (void) 0 : google::LogMessageVoidify() & PLOG(severity)
+      true ? (void)0 : google::LogMessageVoidify() & PLOG(severity)
 
 #endif
 

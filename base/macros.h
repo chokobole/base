@@ -20,8 +20,7 @@
 //   if (TakeOwnership(my_var.get()) == SUCCESS)
 //     ignore_result(my_var.release());
 //
-template<typename T>
-inline void ignore_result(const T&) {
-}
+template <typename T>
+inline void ignore_result(const T&) {}
 
 #endif  // BASE_MACROS_H_
