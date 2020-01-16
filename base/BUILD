@@ -13,10 +13,23 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "callback",
+    hdrs = ["callback.h"],
+    visibility = ["//visibility:public"],
+)
+
+base_cc_library(
     name = "compiler_specific",
     hdrs = ["compiler_specific.h"],
     visibility = ["//visibility:public"],
     deps = [":build_config"],
+)
+
+base_cc_library(
+    name = "completion_once_callback",
+    hdrs = ["completion_once_callback.h"],
+    visibility = ["//visibility:public"],
+    deps = [":callback"],
 )
 
 base_cc_library(

@@ -44,6 +44,7 @@ base/template_util.h:
   Copyright (c) 2011 The Chromium Authors.
 
 base/build_config.h:
+base/callback.h:
 base/compiler_specific.h:
 base/io_buffer.h:
 base/sys_byteorder.h:
@@ -78,6 +79,7 @@ base/sockaddr_storage.cc:
 base/sockaddr_storage.h:
   Copyright 2016 The Chromium Authors.
 
+base/completion_once_callback.h:
 base/no_destructor.h:
   Copyright 2018 The Chromium Authors.
 
