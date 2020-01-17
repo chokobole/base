@@ -93,9 +93,11 @@ base/sys_byteorder_unittest.cc:
 
 base/sockaddr_storage.cc:
 base/sockaddr_storage.h:
+base/socket/socket_options.cc:
   Copyright 2016 The Chromium Authors.
 
 base/socket/socket.cc:
+base/socket/socket_options.h:
   Copyright 2017 The Chromium Authors.
 
 base/completion_once_callback.h:

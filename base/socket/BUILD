@@ -39,8 +39,37 @@ base_cc_library(
 )
 
 base_cc_library(
-    name = "socket_descriptor",
-    hdrs = ["socket_descriptor.h"],
+    name = "platfrom_socket",
+    srcs = if_windows(
+        [
+        ],
+        [
+            "socket_posix.cc",
+        ],
+    ),
+    hdrs = if_windows(
+        [
+        ],
+        [
+            "socket_posix.h",
+        ],
+    ),
+    deps = [
+        ":ip_endpoint",
+        ":sockaddr_storage",
+        ":socket_descriptor",
+        ":socket_errors",
+        "//base:completion_once_callback",
+        "//base:io_buffer",
+        "//base/event_loop",
+        "//base/files:file_util",
+    ],
+)
+
+base_cc_library(
+    name = "sockaddr_storage",
+    srcs = ["sockaddr_storage.cc"],
+    hdrs = ["sockaddr_storage.h"],
     visibility = ["//visibility:public"],
     deps = [
         "//base:build_config",
@@ -49,9 +78,8 @@ base_cc_library(
 )
 
 base_cc_library(
-    name = "sockaddr_storage",
-    srcs = ["sockaddr_storage.cc"],
-    hdrs = ["sockaddr_storage.h"],
+    name = "socket_descriptor",
+    hdrs = ["socket_descriptor.h"],
     visibility = ["//visibility:public"],
     deps = [
         "//base:build_config",
@@ -80,31 +108,13 @@ base_cc_library(
 )
 
 base_cc_library(
-    name = "socket",
-    srcs = if_windows(
-        [
-        ],
-        [
-            "socket_posix.cc",
-        ],
-    ),
-    hdrs = if_windows(
-        [
-        ],
-        [
-            "socket_posix.h",
-        ],
-    ),
+    name = "socket_options",
+    srcs = ["socket_options.cc"],
+    hdrs = ["socket_options.h"],
     visibility = ["//visibility:public"],
     deps = [
-        ":ip_endpoint",
-        ":sockaddr_storage",
         ":socket_descriptor",
         ":socket_errors",
-        "//base:completion_once_callback",
-        "//base:io_buffer",
-        "//base/event_loop",
-        "//base/files:file_util",
     ],
 )
 
