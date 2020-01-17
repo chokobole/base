@@ -10,6 +10,7 @@
 
 #include "base/auto_reset.h"
 #include "base/logging.h"
+#include "base/no_destructor.h"
 #include "event2/event_compat.h"
 #include "event2/event_struct.h"
 
@@ -71,12 +72,19 @@ void EventLoop::FdWatchController::OnFileCanWrite(int fd) {
 
 EventLoop::Delegate::~Delegate() = default;
 
-EventLoop::EventLoop() : event_base_(event_base_new()) { CHECK(event_base_); }
+EventLoop::EventLoop() : event_base_(event_base_new()) {
+  CHECK(event_base_);
+  BindToCurrentThread(this);
+}
 
 EventLoop::~EventLoop() {
   DCHECK(event_base_);
   event_base_free(event_base_);
+  BindToCurrentThread(nullptr);
 }
+
+// static
+EventLoop* EventLoop::Current() { return CurrentTLS().Get(); }
 
 void EventLoop::Run(Delegate* delegate) {
   AutoReset<bool> auto_reset_keep_running(&keep_running_, true);
@@ -188,6 +196,17 @@ void EventLoop::OnNotification(evutil_socket_t fd, short flags, void* context) {
   } else if (flags & EV_READ) {
     controller->OnFileCanRead(fd);
   }
+}
+
+// static
+ThreadLocalPointer<EventLoop>& EventLoop::CurrentTLS() {
+  static NoDestructor<ThreadLocalPointer<EventLoop>> event_loop_tls;
+  return *event_loop_tls;
+}
+
+// static
+void EventLoop::BindToCurrentThread(EventLoop* event_loop) {
+  CurrentTLS().Set(event_loop);
 }
 
 }  // namespace base

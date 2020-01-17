@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "base/export.h"
+#include "base/thread/thread_local.h"
 #include "event2/event.h"
 
 namespace base {
@@ -75,6 +76,8 @@ class BASE_EXPORT EventLoop {
   EventLoop(const EventLoop& other) = delete;
   EventLoop& operator=(const EventLoop& other) = delete;
 
+  static EventLoop* Current();
+
   void Run(Delegate* delegate);
 
   void Quit();
@@ -85,6 +88,9 @@ class BASE_EXPORT EventLoop {
  private:
   // Called by libevent to tell us a registered FD can be read/written to.
   static void OnNotification(evutil_socket_t Fd, short flags, void* context);
+
+  static ThreadLocalPointer<EventLoop>& CurrentTLS();
+  static void BindToCurrentThread(EventLoop* event_loop);
 
   // This flag is set to false when Run should return.
   bool keep_running_;

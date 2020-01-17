@@ -13,6 +13,8 @@ base_cc_library(
         "//base:auto_reset",
         "//base:export",
         "//base:logging",
+        "//base:no_destructor",
+        "//base/thread:thread_local",
         "@com_github_libevent_libevent//:libevent",
     ],
 )
