@@ -43,6 +43,8 @@ base/stl_util.h:
 base/template_util.h:
 base/socket/socket_errors_posix.cc:
 base/socket/socket_errors_win.cc:
+base/socket/winsock_init.cc:
+base/socket/winsock_init.h:
 base/thread/thread_local.h:
   Copyright (c) 2011 The Chromium Authors.
 
@@ -72,6 +74,8 @@ base/socket/socket_dsecriptor.h:
   Copyright 2013 The Chromium Authors.
 
 base/macros.h:
+base/socket/socket_posix.cc:
+base/socket/socket_posix.h:
   Copyright 2014 The Chromium Authors.
 
 base/socket/ip_address.cc:

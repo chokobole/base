@@ -80,6 +80,35 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "socket",
+    srcs = if_windows(
+        [
+        ],
+        [
+            "socket_posix.cc",
+        ],
+    ),
+    hdrs = if_windows(
+        [
+        ],
+        [
+            "socket_posix.h",
+        ],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        ":ip_endpoint",
+        ":sockaddr_storage",
+        ":socket_descriptor",
+        ":socket_errors",
+        "//base:completion_once_callback",
+        "//base:io_buffer",
+        "//base/event_loop",
+        "//base/files:file_util",
+    ],
+)
+
+base_cc_library(
     name = "sys_addrinfo",
     hdrs = ["sys_addrinfo.h"],
     visibility = ["//visibility:public"],
