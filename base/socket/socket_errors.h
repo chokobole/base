@@ -134,6 +134,10 @@ enum SocketErrorCode {
   // Returned when attempting to bind an address that is already in use.
   ERR_ADDRESS_IN_USE = -147,
 
+  // Socket ReadIfReady support is not implemented. This error should not be
+  // user visible, because the normal Read() method is used as a fallback.
+  ERR_READ_IF_READY_NOT_IMPLEMENTED = -174,
+
   // No socket buffer space is available.
   ERR_NO_BUFFER_SPACE = -176,
 };

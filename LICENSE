@@ -41,6 +41,7 @@ base/auto_reset.h:
 base/io_buffer.cc:
 base/stl_util.h:
 base/template_util.h:
+base/socket/socket.h:
 base/socket/socket_errors_posix.cc:
 base/socket/socket_errors_win.cc:
 base/socket/winsock_init.cc:
@@ -93,6 +94,9 @@ base/sys_byteorder_unittest.cc:
 base/sockaddr_storage.cc:
 base/sockaddr_storage.h:
   Copyright 2016 The Chromium Authors.
+
+base/socket/socket.cc:
+  Copyright 2017 The Chromium Authors.
 
 base/completion_once_callback.h:
 base/no_destructor.h:
