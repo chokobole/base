@@ -24,7 +24,8 @@ class ThreadLocalPointer {
   ~ThreadLocalPointer() { internal::PlatformThreadLocalStorage::FreeTLS(key_); }
 
   T* Get() const {
-    return internal::PlatformThreadLocalStorage::GetTLSValue(key_);
+    return static_cast<T*>(
+        internal::PlatformThreadLocalStorage::GetTLSValue(key_));
   }
 
   void Set(T* ptr) {
