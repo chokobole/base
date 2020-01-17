@@ -14,8 +14,7 @@ namespace base {
 
 bool SetNonBlocking(int fd) {
   unsigned long nonblocking = 1;
-  if (ioctlsocket(fd, FIONBIO, &nonblocking) == 0)
-    return true;
+  if (ioctlsocket(fd, FIONBIO, &nonblocking) == 0) return true;
   return false;
 }
 

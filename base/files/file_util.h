@@ -12,8 +12,8 @@
 #ifndef BASE_FILES_FILE_UTIL_H_
 #define BASE_FILES_FILE_UTIL_H_
 
-#include "base/export.h"
 #include "base/build_config.h"
+#include "base/export.h"
 
 namespace base {
 
