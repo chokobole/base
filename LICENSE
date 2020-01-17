@@ -61,6 +61,9 @@ base/files/file_util.h:
 base/files/file_util_posix.cc:
 base/files/file_util_win.cc:
 base/posix/eint_wrapper.h:
+base/socket/address_list.cc:
+base/socket/address_list.h:
+base/socket/address_list_unittest.cc:
 base/socket/ip_endpoint.cc:
 base/socket/ip_endpoint.h:
 base/socket/ip_endpoint_unittest.cc:

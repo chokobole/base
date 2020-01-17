@@ -13,6 +13,18 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "address_list",
+    srcs = ["address_list.cc"],
+    hdrs = ["address_list.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":ip_endpoint",
+        ":sockaddr_storage",
+        "//base/containers:flat_map",
+    ],
+)
+
+base_cc_library(
     name = "ip_address",
     srcs = ["ip_address.cc"],
     hdrs = ["ip_address.h"],
@@ -128,12 +140,12 @@ base_cc_library(
 base_cc_test(
     name = "socket_unittests",
     srcs = [
+        "address_list_unittest.cc",
         "ip_address_unittest.cc",
         "ip_endpoint_unittest.cc",
     ],
     deps = [
-        ":ip_endpoint",
-        ":sockaddr_storage",
+        ":address_list",
         "@com_google_googletest//:gtest_main",
     ],
 )
