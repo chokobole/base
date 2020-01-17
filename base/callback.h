@@ -11,6 +11,8 @@
 
 #include <functional>
 
+using namespace std::placeholders;
+
 template <typename R, typename... Args>
 class OnceCallback;
 
@@ -19,15 +21,24 @@ class OnceCallback<R(Args...)> {
  public:
   typedef std::function<R(Args...)> CallbackTy;
 
+  OnceCallback() = default;
   explicit OnceCallback(CallbackTy callback) : callback_(callback) {}
+  OnceCallback(const OnceCallback& other) = delete;
+  OnceCallback& operator=(const OnceCallback& other) = delete;
+  OnceCallback(OnceCallback&& other) = default;
+  OnceCallback& operator=(OnceCallback&& other) = default;
 
-  R Invoke(Args&&... args) && {
+  R Invoke(Args... args) && {
     CallbackTy callback = callback_;
     callback_ = nullptr;
     return callback(std::forward<Args>(args)...);
   }
 
   operator bool() { return static_cast<bool>(callback_); }
+
+  bool is_null() const { return !static_cast<bool>(callback_); }
+
+  void Reset() { callback_ = nullptr; }
 
   CallbackTy callback_;
 };
@@ -40,17 +51,26 @@ class RepeatingCallback<R(Args...)> {
  public:
   typedef std::function<R(Args...)> CallbackTy;
 
+  RepeatingCallback() = default;
   explicit RepeatingCallback(CallbackTy callback) : callback_(callback) {}
+  RepeatingCallback(const RepeatingCallback& other) = default;
+  RepeatingCallback& operator=(const RepeatingCallback& other) = default;
 
-  R Invoke(Args&&... args) const & { return callback_(std::forward<Args>(args)...); }
+  R Invoke(Args... args) const& {
+    return callback_(std::forward<Args>(args)...);
+  }
 
-  R Invoke(Args&&... args) && {
+  R Invoke(Args... args) && {
     CallbackTy callback = callback_;
     callback_ = nullptr;
     return callback(std::forward<Args>(args)...);
   }
 
   operator bool() { return static_cast<bool>(callback_); }
+
+  bool is_null() const { return !static_cast<bool>(callback_); }
+
+  void Reset() { callback_ = nullptr; }
 
   CallbackTy callback_;
 };
