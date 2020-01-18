@@ -69,6 +69,8 @@ base/socket/address_list_unittest.cc:
 base/socket/ip_endpoint.cc:
 base/socket/ip_endpoint.h:
 base/socket/ip_endpoint_unittest.cc:
+base/socket/socket_error_list.h:
+base/socket/socket_errors.cc:
 base/socket/socket_errors.h:
 base/socket/udp_socket_posix.cc:
 base/socket/udp_socket_posix.h:

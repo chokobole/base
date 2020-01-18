@@ -123,7 +123,7 @@ base_cc_library(
 
 base_cc_library(
     name = "socket_errors",
-    srcs = if_windows(
+    srcs = ["socket_errors.cc"] + if_windows(
         [
             "socket_errors_win.cc",
         ],
@@ -131,7 +131,10 @@ base_cc_library(
             "socket_errors_posix.cc",
         ],
     ),
-    hdrs = ["socket_errors.h"],
+    hdrs = [
+        "socket_errors.h",
+        "socket_error_list.h",
+    ],
     visibility = ["//visibility:public"],
     deps = [
         "//base:build_config",
