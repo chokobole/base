@@ -392,7 +392,7 @@ int UDPSocketPosix::SendToOrWrite(std::shared_ptr<IOBuffer> buf, int buf_len,
   if (!EventLoop::Current()->WatchFileDescriptor(
           socket_, true, EventLoop::WATCH_WRITE, &write_socket_watcher_,
           &write_watcher_)) {
-    // DVPLOG(1) << "WatchFileDescriptor failed on write";
+    DVPLOG(1) << "WatchFileDescriptor failed on write";
     return MapSystemError(errno);
   }
 
@@ -1031,17 +1031,17 @@ void UDPSocketPosix::DidSendBuffers(SendResult send_result) {
 
   last_async_result_ = send_result.rv;
   if (last_async_result_ == ERR_IO_PENDING) {
-    // DVLOG(2) << __func__ << " WatchFileDescriptor start";
+    DVLOG(2) << __func__ << " WatchFileDescriptor start";
     if (!WatchFileDescriptor()) {
-      // DVPLOG(1) << "WatchFileDescriptor failed on write";
+      DVPLOG(1) << "WatchFileDescriptor failed on write";
       last_async_result_ = MapSystemError(errno);
     } else {
       last_async_result_ = 0;
     }
   } else if (last_async_result_ < 0 || pending_writes_.empty()) {
-    // DVLOG(2) << __func__ << " WatchFileDescriptor stop: result "
-    //          << ErrorToShortString(last_async_result_) << " pending_writes "
-    //          << pending_writes_.size();
+    DVLOG(2) << __func__ << " WatchFileDescriptor stop: result "
+             << ErrorToShortString(last_async_result_) << " pending_writes "
+             << pending_writes_.size();
     StopWatchingFileDescriptor();
   }
   DCHECK(last_async_result_ != ERR_IO_PENDING);

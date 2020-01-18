@@ -10,15 +10,24 @@
 
 #define NOTREACHED() CHECK(false)
 
+#define VPLOG(verboselevel) PLOG_IF(INFO, VLOG_IS_ON(verboselevel))
+
 #if DCHECK_IS_ON()
 
 #define DPLOG(severity) PLOG(severity)
+
+#define DVPLOG(verboselevel) VPLOG(verboselevel)
 
 #else  // !DCHECK_IS_ON()
 
 #define DPLOG(severity) \
   static_cast<void>(0), \
       true ? (void)0 : google::LogMessageVoidify() & PLOG(severity)
+
+#define DVPLOG(verboselevel)                                \
+  static_cast<void>(0), (true || !VLOG_IS_ON(verboselevel)) \
+                            ? (void)0                       \
+                            : google::LogMessageVoidify() & VPLOG(INFO)
 
 #endif
 
