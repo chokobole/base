@@ -51,7 +51,7 @@ base_cc_library(
 )
 
 base_cc_library(
-    name = "platfrom_socket",
+    name = "platform_socket",
     srcs = if_windows(
         [
         ],
@@ -135,6 +135,31 @@ base_cc_library(
     hdrs = ["sys_addrinfo.h"],
     visibility = ["//visibility:public"],
     deps = ["//base:build_config"],
+)
+
+base_cc_library(
+    name = "tcp_socket",
+    srcs = if_windows(
+        [
+        ],
+        [
+            "tcp_socket_posix.cc",
+        ],
+    ),
+    hdrs = ["tcp_socket.h"] + if_windows(
+        [
+        ],
+        [
+            "tcp_socket_posix.h",
+        ],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        ":address_list",
+        ":platform_socket",
+        ":socket_options",
+        "@com_google_absl//absl/time",
+    ],
 )
 
 base_cc_test(

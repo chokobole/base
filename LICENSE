@@ -75,6 +75,9 @@ base/thread/thread_local_storage_win.cc:
 
 base/socket/socket_dsecriptor.cc:
 base/socket/socket_dsecriptor.h:
+base/socket/tcp_socket.h:
+base/socket/tcp_socket_posix.cc:
+base/socket/tcp_socket_posix.h:
   Copyright 2013 The Chromium Authors.
 
 base/macros.h:

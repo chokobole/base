@@ -23,10 +23,8 @@ class OnceCallback<R(Args...)> {
 
   OnceCallback() = default;
   explicit OnceCallback(CallbackTy callback) : callback_(callback) {}
-  OnceCallback(const OnceCallback& other) = delete;
-  OnceCallback& operator=(const OnceCallback& other) = delete;
-  OnceCallback(OnceCallback&& other) = default;
-  OnceCallback& operator=(OnceCallback&& other) = default;
+  OnceCallback(const OnceCallback& other) = default;
+  OnceCallback& operator=(const OnceCallback& other) = default;
 
   R Invoke(Args... args) && {
     CallbackTy callback = callback_;
