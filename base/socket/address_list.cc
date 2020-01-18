@@ -91,7 +91,7 @@ void AddressList::Deduplicate() {
   if (size() > 1) {
     std::vector<std::pair<IPEndPoint, int>> make_me_into_a_map(size());
     for (auto& addr : *this) make_me_into_a_map.emplace_back(addr, 0);
-    base::flat_map<IPEndPoint, int> inserted(std::move(make_me_into_a_map));
+    flat_map<IPEndPoint, int> inserted(std::move(make_me_into_a_map));
 
     AddressList deduplicated_addresses;
     deduplicated_addresses.reserve(inserted.size());

@@ -194,9 +194,7 @@ int TCPSocketPosix::Connect(const IPEndPoint& address,
 }
 
 bool TCPSocketPosix::IsConnected() const {
-  if (!socket_) return false;
-
-  return socket_->IsConnected();
+  return socket_ && socket_->IsConnected();
 }
 
 bool TCPSocketPosix::IsConnectedAndIdle() const {

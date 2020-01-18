@@ -40,6 +40,28 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "datagram_buffer",
+    srcs = ["datagram_buffer.cc"],
+    hdrs = ["datagram_buffer.h"],
+    deps = [
+        "//base:export",
+        "//base:logging",
+        "@com_google_absl//absl/memory",
+    ],
+)
+
+base_cc_library(
+    name = "datagram_socket",
+    hdrs = ["datagram_socket.h"],
+    deps = ["//base:export"],
+)
+
+base_cc_library(
+    name = "diff_serv_code_point",
+    hdrs = ["diff_serv_code_point.h"],
+)
+
+base_cc_library(
     name = "ip_endpoint",
     srcs = ["ip_endpoint.cc"],
     hdrs = ["ip_endpoint.h"],
@@ -159,6 +181,34 @@ base_cc_library(
         ":platform_socket",
         ":socket_options",
         "@com_google_absl//absl/time",
+    ],
+)
+
+base_cc_library(
+    name = "udp_socket",
+    srcs = if_windows(
+        [
+        ],
+        [
+            "udp_socket_posix.cc",
+        ],
+    ),
+    hdrs = ["udp_socket.h"] + if_windows(
+        [
+        ],
+        [
+            "udp_socket_posix.h",
+        ],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        ":datagram_buffer",
+        ":datagram_socket",
+        ":diff_serv_code_point",
+        ":platform_socket",
+        ":socket_options",
+        "@com_google_absl//absl/time",
+        "@com_google_absl//absl/random",
     ],
 )
 

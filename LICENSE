@@ -41,9 +41,11 @@ base/auto_reset.h:
 base/io_buffer.cc:
 base/stl_util.h:
 base/template_util.h:
+base/socket/datagram_socket.h:
 base/socket/socket.h:
 base/socket/socket_errors_posix.cc:
 base/socket/socket_errors_win.cc:
+base/socket/udp_socket.h:
 base/socket/winsock_init.cc:
 base/socket/winsock_init.h:
 base/thread/thread_local.h:
@@ -68,6 +70,8 @@ base/socket/ip_endpoint.cc:
 base/socket/ip_endpoint.h:
 base/socket/ip_endpoint_unittest.cc:
 base/socket/socket_errors.h:
+base/socket/udp_socket_posix.cc:
+base/socket/udp_socket_posix.h:
 base/thread/thread_local_storage.h:
 base/thread/thread_local_storage_posix.cc:
 base/thread/thread_local_storage_win.cc:
@@ -91,6 +95,7 @@ base/socket/ip_address_unittest.cc:
   Copyright (c) 2015 The Chromium Authors.
 
 base/socket/address_family.cc:
+base/socket/diff_serv_code_point.h:
   Copyright 2015 The Chromium Authors.
 
 base/free_deleter.h:
@@ -111,7 +116,12 @@ base/socket/socket_options.h:
 
 base/completion_once_callback.h:
 base/no_destructor.h:
+base/socket/datagram_buffer.cc:
+base/socket/datagram_buffer_unittest.cc:
   Copyright 2018 The Chromium Authors.
+
+base/socket/datagram_buffer.h:
+  Copyright (c) 2018 The Chromium Authors.
 
 base/auto_reset_unittest.cc:
   Copyright 2019 The Chromium Authors.

@@ -28,7 +28,7 @@ namespace base {
 // not suitable for your use case (e.g., a socket needs to be created and bound
 // before you know whether it is a client or server socket).
 #if defined(OS_WIN)
-typedef TCPSocketWin TCPSocket;
+// typedef TCPSocketWin TCPSocket;
 #elif defined(OS_POSIX)
 typedef TCPSocketPosix TCPSocket;
 #endif
