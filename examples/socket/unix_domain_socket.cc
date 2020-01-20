@@ -26,14 +26,13 @@ class EchoServer {
       : server_socket_(server_socket) {}
 
   void Start() {
-    server_socket_->Accept(&accepted_socket_,
-                           base::CompletionOnceCallback([this](int result) {
-                             if (result != base::OK) {
-                               LOG(ERROR) << base::ErrorToShortString(result);
-                               return;
-                             }
-                             Read(strlen(kMessage));
-                           }));
+    server_socket_->Accept(&accepted_socket_, [this](int result) {
+      if (result != base::OK) {
+        LOG(ERROR) << base::ErrorToShortString(result);
+        return;
+      }
+      Read(strlen(kMessage));
+    });
   }
 
  private:
@@ -42,9 +41,8 @@ class EchoServer {
     read_buffer_->SetCapacity(len);
     size_t to_read = read_buffer_->capacity();
     while (to_read > 0) {
-      int rv = accepted_socket_->Read(
-          read_buffer_, to_read,
-          base::CompletionOnceCallback([this](int result) { OnRead(result); }));
+      int rv = accepted_socket_->Read(read_buffer_, to_read,
+                                      [this](int result) { OnRead(result); });
 
       if (rv == base::ERR_IO_PENDING) {
         break;
@@ -85,8 +83,8 @@ class EchoClient {
 
   void ConnectAndWrite(const std::string& text) {
     text_ = text;
-    int result = stream_socket_->Connect(base::CompletionOnceCallback(
-        std::bind(&EchoClient::OnConnect, this, _1)));
+    int result =
+        stream_socket_->Connect([this](int result) { OnConnect(result); });
     if (result != base::ERR_IO_PENDING) {
       OnConnect(result);
     }
@@ -110,8 +108,7 @@ class EchoClient {
     while (write_buffer->BytesRemaining() > 0) {
       int rv =
           stream_socket_->Write(write_buffer, write_buffer->BytesRemaining(),
-                                base::CompletionOnceCallback(
-                                    [this](int result) { OnWrite(result); }));
+                                [this](int result) { OnWrite(result); });
 
       if (rv == base::ERR_IO_PENDING) break;
 
@@ -150,8 +147,7 @@ int main(int argc, char** argv) {
   base::EventLoop event_loop;
   std::string socket_path("uds_socket");
   base::UnixDomainClientSocket client_socket(socket_path, false);
-  base::UnixDomainServerSocket server_socket(
-      base::UnixDomainServerSocket::AuthCallback(&CheckCredentials), false);
+  base::UnixDomainServerSocket server_socket(&CheckCredentials, false);
   int rv = server_socket.BindAndListen(socket_path, 5);
   if (rv != 0) {
     LOG(ERROR) << base::ErrorToShortString(rv);

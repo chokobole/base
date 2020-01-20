@@ -122,11 +122,9 @@ int UnixDomainServerSocket::Accept(std::unique_ptr<StreamSocket>* socket,
   DCHECK(callback);
   DCHECK(!callback_);
 
-  SetterCallback setter_callback(
-      [socket](std::unique_ptr<SocketPosix> accepted_socket) {
-        SetStreamSocket(socket, std::move(accepted_socket));
-      });
-  int rv = DoAccept(setter_callback);
+  int rv = DoAccept([socket](std::unique_ptr<SocketPosix> accepted_socket) {
+    SetStreamSocket(socket, std::move(accepted_socket));
+  });
   if (rv == ERR_IO_PENDING) callback_ = std::move(callback);
   return rv;
 }
@@ -137,11 +135,9 @@ int UnixDomainServerSocket::AcceptSocketDescriptor(
   DCHECK(callback);
   DCHECK(!callback_);
 
-  SetterCallback setter_callback(
-      [socket](std::unique_ptr<SocketPosix> accepted_socket) {
-        SetSocketDescriptor(socket, std::move(accepted_socket));
-      });
-  int rv = DoAccept(setter_callback);
+  int rv = DoAccept([socket](std::unique_ptr<SocketPosix> accepted_socket) {
+    SetSocketDescriptor(socket, std::move(accepted_socket));
+  });
   if (rv == ERR_IO_PENDING) callback_ = std::move(callback);
   return rv;
 }
@@ -152,11 +148,10 @@ int UnixDomainServerSocket::DoAccept(const SetterCallback& setter_callback) {
   DCHECK(!accept_socket_);
 
   while (true) {
-    int rv = listen_socket_->Accept(
-        &accept_socket_,
-        CompletionOnceCallback([this, setter_callback](int rv) {
-          AcceptCompleted(setter_callback, rv);
-        }));
+    int rv = listen_socket_->Accept(&accept_socket_,
+                                    [this, setter_callback](int rv) {
+                                      AcceptCompleted(setter_callback, rv);
+                                    });
     if (rv != OK) return rv;
     if (AuthenticateAndGetStreamSocket(setter_callback)) return OK;
     // Accept another socket because authentication error should be transparent

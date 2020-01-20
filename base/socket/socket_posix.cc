@@ -234,9 +234,8 @@ bool SocketPosix::IsConnectedAndIdle() const {
 
 int SocketPosix::Read(std::shared_ptr<IOBuffer> buf, int buf_len,
                       CompletionOnceCallback callback) {
-  int rv = ReadIfReady(
-      buf.get(), buf_len,
-      CompletionOnceCallback(std::bind(&SocketPosix::RetryRead, this, _1)));
+  int rv = ReadIfReady(buf.get(), buf_len,
+                       std::bind(&SocketPosix::RetryRead, this, _1));
   if (rv == ERR_IO_PENDING) {
     read_buf_ = buf;
     read_buf_len_ = buf_len;
@@ -425,9 +424,8 @@ void SocketPosix::RetryRead(int rv) {
   DCHECK_LT(0, read_buf_len_);
 
   if (rv == OK) {
-    rv = ReadIfReady(
-        read_buf_.get(), read_buf_len_,
-        CompletionOnceCallback(std::bind(&SocketPosix::RetryRead, this, _1)));
+    rv = ReadIfReady(read_buf_.get(), read_buf_len_,
+                     std::bind(&SocketPosix::RetryRead, this, _1));
     if (rv == ERR_IO_PENDING) return;
   }
   read_buf_ = nullptr;

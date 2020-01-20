@@ -6,8 +6,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "base/socket/tcp_socket.h"
-
 #include <errno.h>
 #include <netinet/tcp.h>
 #include <sys/socket.h>
@@ -25,6 +23,7 @@
 #include "base/socket/socket_errors.h"
 #include "base/socket/socket_options.h"
 #include "base/socket/socket_posix.h"
+#include "base/socket/tcp_socket.h"
 
 // If we don't have a definition for TCPI_OPT_SYN_DATA, create one.
 #if !defined(TCPI_OPT_SYN_DATA)
@@ -173,11 +172,10 @@ int TCPSocketPosix::Accept(std::unique_ptr<TCPSocketPosix>* tcp_socket,
   DCHECK(socket_);
   DCHECK(!accept_socket_);
 
-  int rv = socket_->Accept(
-      &accept_socket_,
-      CompletionOnceCallback([this, tcp_socket, address, callback](int rv) {
-        AcceptCompleted(tcp_socket, address, callback, rv);
-      }));
+  int rv = socket_->Accept(&accept_socket_,
+                           [this, tcp_socket, address, callback](int rv) {
+                             AcceptCompleted(tcp_socket, address, callback, rv);
+                           });
   if (rv != ERR_IO_PENDING) rv = HandleAcceptCompleted(tcp_socket, address, rv);
   return rv;
 }

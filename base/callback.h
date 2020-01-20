@@ -10,6 +10,7 @@
 #define BASE_CALLBACK_H_
 
 #include <functional>
+#include <type_traits>
 
 using namespace std::placeholders;
 
@@ -22,7 +23,11 @@ class OnceCallback<R(Args...)> {
   typedef std::function<R(Args...)> CallbackTy;
 
   OnceCallback() = default;
-  explicit OnceCallback(CallbackTy callback) : callback_(callback) {}
+  OnceCallback(CallbackTy callback) : callback_(callback) {}
+  template <
+      typename T,
+      std::enable_if_t<std::is_convertible<T, CallbackTy>::value>* = nullptr>
+  OnceCallback(T&& callback) : callback_(callback) {}
   OnceCallback(const OnceCallback& other) = default;
   OnceCallback& operator=(const OnceCallback& other) = default;
 
@@ -50,7 +55,11 @@ class RepeatingCallback<R(Args...)> {
   typedef std::function<R(Args...)> CallbackTy;
 
   RepeatingCallback() = default;
-  explicit RepeatingCallback(CallbackTy callback) : callback_(callback) {}
+  RepeatingCallback(CallbackTy callback) : callback_(callback) {}
+  template <
+      typename T,
+      std::enable_if_t<std::is_convertible<T, CallbackTy>::value>* = nullptr>
+  RepeatingCallback(T&& callback) : callback_(callback) {}
   RepeatingCallback(const RepeatingCallback& other) = default;
   RepeatingCallback& operator=(const RepeatingCallback& other) = default;
 
