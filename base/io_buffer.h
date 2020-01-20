@@ -37,6 +37,7 @@ class BASE_EXPORT IOBuffer {
 class BASE_EXPORT IOBufferWithSize : public IOBuffer {
  public:
   explicit IOBufferWithSize(size_t size);
+  ~IOBufferWithSize() override;
 
   size_t size() const { return size_; }
 
@@ -45,7 +46,6 @@ class BASE_EXPORT IOBufferWithSize : public IOBuffer {
   // constructor IOBuffer(char*) thus allowing subclass to use underlying
   // memory it does not own.
   IOBufferWithSize(char* data, size_t size);
-  ~IOBufferWithSize() override;
 
   size_t size_;
 };
@@ -56,12 +56,11 @@ class BASE_EXPORT StringIOBuffer : public IOBuffer {
  public:
   explicit StringIOBuffer(const std::string& s);
   explicit StringIOBuffer(std::unique_ptr<std::string> s);
+  ~StringIOBuffer() override;
 
   size_t size() const { return string_data_.size(); }
 
  private:
-  ~StringIOBuffer() override;
-
   std::string string_data_;
 };
 
@@ -85,6 +84,7 @@ class BASE_EXPORT StringIOBuffer : public IOBuffer {
 class BASE_EXPORT DrainableIOBuffer : public IOBuffer {
  public:
   DrainableIOBuffer(std::shared_ptr<IOBuffer> base, size_t size);
+  ~DrainableIOBuffer() override;
 
   // DidConsume() changes the |data_| pointer so that |data_| always points
   // to the first unconsumed byte.
@@ -103,8 +103,6 @@ class BASE_EXPORT DrainableIOBuffer : public IOBuffer {
   size_t size() const { return size_; }
 
  private:
-  ~DrainableIOBuffer() override;
-
   std::shared_ptr<IOBuffer> base_;
   size_t size_;
   size_t used_;
@@ -130,6 +128,7 @@ class BASE_EXPORT DrainableIOBuffer : public IOBuffer {
 class BASE_EXPORT GrowableIOBuffer : public IOBuffer {
  public:
   GrowableIOBuffer();
+  ~GrowableIOBuffer() override;
 
   // realloc memory to the specified capacity.
   void SetCapacity(size_t capacity);
@@ -143,8 +142,6 @@ class BASE_EXPORT GrowableIOBuffer : public IOBuffer {
   char* StartOfBuffer();
 
  private:
-  ~GrowableIOBuffer() override;
-
   std::unique_ptr<char, FreeDeleter> real_data_;
   size_t capacity_;
   size_t offset_;
@@ -158,8 +155,6 @@ class BASE_EXPORT GrowableIOBuffer : public IOBuffer {
 class BASE_EXPORT WrappedIOBuffer : public IOBuffer {
  public:
   explicit WrappedIOBuffer(const char* data);
-
- protected:
   ~WrappedIOBuffer() override;
 };
 
