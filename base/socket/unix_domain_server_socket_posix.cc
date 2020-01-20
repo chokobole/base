@@ -164,19 +164,19 @@ void UnixDomainServerSocket::AcceptCompleted(
   DCHECK(!callback_.is_null());
 
   if (rv != OK) {
-    std::move(callback_).Invoke(rv);
+    std::move(callback_).Run(rv);
     return;
   }
 
   if (AuthenticateAndGetStreamSocket(setter_callback)) {
-    std::move(callback_).Invoke(OK);
+    std::move(callback_).Run(OK);
     return;
   }
 
   // Accept another socket because authentication error should be transparent
   // to the caller.
   rv = DoAccept(setter_callback);
-  if (rv != ERR_IO_PENDING) std::move(callback_).Invoke(rv);
+  if (rv != ERR_IO_PENDING) std::move(callback_).Run(rv);
 }
 
 bool UnixDomainServerSocket::AuthenticateAndGetStreamSocket(
@@ -185,12 +185,12 @@ bool UnixDomainServerSocket::AuthenticateAndGetStreamSocket(
 
   Credentials credentials;
   if (!GetPeerCredentials(accept_socket_->socket_fd(), &credentials) ||
-      !auth_callback_.Invoke(credentials)) {
+      !auth_callback_.Run(credentials)) {
     accept_socket_.reset();
     return false;
   }
 
-  setter_callback.Invoke(std::move(accept_socket_));
+  setter_callback.Run(std::move(accept_socket_));
   return true;
 }
 

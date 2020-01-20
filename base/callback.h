@@ -31,7 +31,7 @@ class OnceCallback<R(Args...)> {
   OnceCallback(const OnceCallback& other) = default;
   OnceCallback& operator=(const OnceCallback& other) = default;
 
-  R Invoke(Args... args) && {
+  R Run(Args... args) && {
     CallbackTy callback = callback_;
     callback_ = nullptr;
     return callback(std::forward<Args>(args)...);
@@ -63,11 +63,9 @@ class RepeatingCallback<R(Args...)> {
   RepeatingCallback(const RepeatingCallback& other) = default;
   RepeatingCallback& operator=(const RepeatingCallback& other) = default;
 
-  R Invoke(Args... args) const& {
-    return callback_(std::forward<Args>(args)...);
-  }
+  R Run(Args... args) const& { return callback_(std::forward<Args>(args)...); }
 
-  R Invoke(Args... args) && {
+  R Run(Args... args) && {
     CallbackTy callback = callback_;
     callback_ = nullptr;
     return callback(std::forward<Args>(args)...);

@@ -385,7 +385,7 @@ void SocketPosix::AcceptCompleted() {
   bool ok = accept_socket_watcher_.StopWatchingFileDescriptor();
   DCHECK(ok);
   accept_socket_ = nullptr;
-  std::move(accept_callback_).Invoke(rv);
+  std::move(accept_callback_).Run(rv);
 }
 
 int SocketPosix::DoConnect() {
@@ -410,7 +410,7 @@ void SocketPosix::ConnectCompleted() {
   bool ok = write_socket_watcher_.StopWatchingFileDescriptor();
   DCHECK(ok);
   waiting_connect_ = false;
-  std::move(write_callback_).Invoke(rv);
+  std::move(write_callback_).Run(rv);
 }
 
 int SocketPosix::DoRead(IOBuffer* buf, int buf_len) {
@@ -430,7 +430,7 @@ void SocketPosix::RetryRead(int rv) {
   }
   read_buf_ = nullptr;
   read_buf_len_ = 0;
-  std::move(read_callback_).Invoke(rv);
+  std::move(read_callback_).Run(rv);
 }
 
 void SocketPosix::ReadCompleted() {
@@ -438,7 +438,7 @@ void SocketPosix::ReadCompleted() {
 
   bool ok = read_socket_watcher_.StopWatchingFileDescriptor();
   DCHECK(ok);
-  std::move(read_if_ready_callback_).Invoke(OK);
+  std::move(read_if_ready_callback_).Run(OK);
 }
 
 int SocketPosix::DoWrite(IOBuffer* buf, int buf_len) {
@@ -462,7 +462,7 @@ void SocketPosix::WriteCompleted() {
   DCHECK(ok);
   write_buf_.reset();
   write_buf_len_ = 0;
-  std::move(write_callback_).Invoke(rv);
+  std::move(write_callback_).Run(rv);
 }
 
 void SocketPosix::StopWatchingAndCleanUp(bool close_socket) {

@@ -330,7 +330,7 @@ void TCPSocketPosix::AcceptCompleted(
     std::unique_ptr<TCPSocketPosix>* tcp_socket, IPEndPoint* address,
     CompletionOnceCallback callback, int rv) {
   DCHECK_NE(ERR_IO_PENDING, rv);
-  std::move(callback).Invoke(HandleAcceptCompleted(tcp_socket, address, rv));
+  std::move(callback).Run(HandleAcceptCompleted(tcp_socket, address, rv));
 }
 
 int TCPSocketPosix::HandleAcceptCompleted(

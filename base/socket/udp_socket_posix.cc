@@ -569,7 +569,7 @@ void UDPSocketPosix::DoReadCallback(int rv) {
 
   // Since Run() may result in Read() being called,
   // clear |read_callback_| up front.
-  std::move(read_callback_).Invoke(rv);
+  std::move(read_callback_).Run(rv);
 }
 
 void UDPSocketPosix::DoWriteCallback(int rv) {
@@ -578,7 +578,7 @@ void UDPSocketPosix::DoWriteCallback(int rv) {
 
   // Since Run() may result in Write() being called,
   // clear |write_callback_| up front.
-  std::move(write_callback_).Invoke(rv);
+  std::move(write_callback_).Run(rv);
 }
 
 void UDPSocketPosix::DidCompleteRead() {
