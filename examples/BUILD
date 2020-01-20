@@ -1,5 +1,3 @@
-cc_binary(
-    name = "event_loop_main",
-    srcs = ["event_loop_main.cc"],
-    deps = ["//base/event_loop"],
-)
+exports_files([
+    "only_main.cc",
+])
