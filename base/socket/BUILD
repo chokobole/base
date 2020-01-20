@@ -52,8 +52,16 @@ base_cc_library(
 
 base_cc_library(
     name = "datagram_socket",
-    hdrs = ["datagram_socket.h"],
-    deps = ["//base:export"],
+    hdrs = [
+        "datagram_client_socket.h",
+        "datagram_server_socket.h",
+        "datagram_socket.h",
+    ],
+    deps = [
+        ":datagram_buffer",
+        ":diff_serv_code_point",
+        ":socket",
+    ],
 )
 
 base_cc_library(
@@ -240,14 +248,21 @@ base_cc_library(
 
 base_cc_library(
     name = "udp_socket",
-    srcs = if_windows(
+    srcs = [
+        "udp_client_socket.cc",
+        "udp_server_socket.cc",
+    ] +if_windows(
         [
         ],
         [
             "udp_socket_posix.cc",
         ],
     ),
-    hdrs = ["udp_socket.h"] + if_windows(
+    hdrs = [
+        "udp_client_socket.h",
+        "udp_server_socket.h",
+        "udp_socket.h",
+    ] + if_windows(
         [
         ],
         [
@@ -256,9 +271,7 @@ base_cc_library(
     ),
     visibility = ["//visibility:public"],
     deps = [
-        ":datagram_buffer",
         ":datagram_socket",
-        ":diff_serv_code_point",
         ":platform_socket",
         ":socket_options",
         "@com_google_absl//absl/random",

@@ -41,6 +41,8 @@ base/auto_reset.h:
 base/io_buffer.cc:
 base/stl_util.h:
 base/template_util.h:
+base/socket/datagram_client_socket.h:
+base/socket/datagram_server_socket.h:
 base/socket/datagram_socket.h:
 base/socket/server_socket.h:
 base/socket/socket.h:
@@ -49,6 +51,8 @@ base/socket/socket_errors_win.cc:
 base/socket/stream_socket.cc:
 base/socket/tcp_client_socket.h:
 base/socket/tcp_server_socket.h:
+base/socket/udp_client_socket.cc:
+base/socket/udp_client_socket.h:
 base/socket/udp_socket.h:
 base/socket/winsock_init.cc:
 base/socket/winsock_init.h:
@@ -79,6 +83,8 @@ base/socket/socket_errors.h:
 base/socket/stream_socket.h:
 base/socket/udp_socket_posix.cc:
 base/socket/udp_socket_posix.h:
+base/socket/udp_server_socket.cc:
+base/socket/udp_server_socket.h:
 base/thread/thread_local_storage.h:
 base/thread/thread_local_storage_posix.cc:
 base/thread/thread_local_storage_win.cc:
