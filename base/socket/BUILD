@@ -76,6 +76,7 @@ base_cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":address_family",
+        ":winsock_util",
         "//base:sys_byteorder",
     ],
 )
@@ -313,6 +314,16 @@ base_cc_library(
         "//base:export",
         "//base:logging",
         "@com_google_absl//absl/base",
+    ],
+)
+
+base_cc_library(
+    name = "winsock_util",
+    srcs = if_windows(["winsock_util.cc"]),
+    hdrs = if_windows(["winsock_util.h"]),
+    deps = [
+        ":socket_errors",
+        "//base:logging",
     ],
 )
 

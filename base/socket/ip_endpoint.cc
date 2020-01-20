@@ -23,6 +23,10 @@
 #include "base/socket/ip_address.h"
 #include "base/sys_byteorder.h"
 
+#if defined(OS_WIN)
+#include "base/socket/winsock_util.h"
+#endif
+
 namespace base {
 
 namespace {
@@ -63,7 +67,7 @@ bool GetIPAddressFromSockAddr(const struct sockaddr* sock_addr,
       return false;
     const SOCKADDR_BTH* addr = reinterpret_cast<const SOCKADDR_BTH*>(sock_addr);
     *address = reinterpret_cast<const uint8_t*>(&addr->btAddr);
-    *address_len = 6;
+    *address_len = kBluetoothAddressSize;
     if (port) *port = static_cast<uint16_t>(addr->port);
     return true;
   }
