@@ -12,7 +12,9 @@
 
 namespace base {
 
-int Socket::ReadIfReady(IOBuffer* buf, int buf_len,
+Socket::~Socket() = default;
+
+int Socket::ReadIfReady(std::shared_ptr<IOBuffer> buf, int buf_len,
                         CompletionOnceCallback callback) {
   return ERR_READ_IF_READY_NOT_IMPLEMENTED;
 }

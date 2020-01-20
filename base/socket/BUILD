@@ -105,8 +105,8 @@ base_cc_library(
     srcs = ["server_socket.cc"],
     hdrs = ["server_socket.h"],
     deps = [
-        ":socket_errors",
         ":ip_endpoint",
+        ":socket_errors",
         "//base:completion_once_callback",
     ],
 )
@@ -124,18 +124,21 @@ base_cc_library(
 
 base_cc_library(
     name = "socket",
+    srcs = ["socket.cc"],
     hdrs = ["socket.h"],
     deps = [
-        "//base:export",
+        ":socket_errors",
         "//base:completion_once_callback",
     ],
 )
 
 base_cc_library(
     name = "socket_descriptor",
+    srcs = ["socket_descriptor.cc"],
     hdrs = ["socket_descriptor.h"],
     visibility = ["//visibility:public"],
     deps = [
+        ":winsock_init",
         "//base:build_config",
         "//base:export",
     ],
@@ -152,8 +155,8 @@ base_cc_library(
         ],
     ),
     hdrs = [
-        "socket_errors.h",
         "socket_error_list.h",
+        "socket_errors.h",
     ],
     visibility = ["//visibility:public"],
     deps = [
@@ -180,9 +183,9 @@ base_cc_library(
     srcs = ["stream_socket.cc"],
     hdrs = ["stream_socket.h"],
     deps = [
+        ":ip_endpoint",
         ":socket",
         ":socket_errors",
-        ":ip_endpoint",
         "//base:completion_once_callback",
     ],
 )
@@ -242,8 +245,8 @@ base_cc_library(
         ":diff_serv_code_point",
         ":platform_socket",
         ":socket_options",
-        "@com_google_absl//absl/time",
         "@com_google_absl//absl/random",
+        "@com_google_absl//absl/time",
     ],
 )
 
@@ -270,6 +273,17 @@ base_cc_library(
         ":platform_socket",
         ":server_socket",
         ":stream_socket",
+    ],
+)
+
+base_cc_library(
+    name = "winsock_init",
+    srcs = if_windows(["winsock_init.cc"]),
+    hdrs = if_windows(["winsock_init.h"]),
+    deps = [
+        "//base:export",
+        "//base:logging",
+        "@com_google_absl//absl/base",
     ],
 )
 
