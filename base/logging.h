@@ -31,4 +31,14 @@
 
 #endif
 
+#if defined(COMPILER_GCC)
+// On Linux, with GCC, we can use __PRETTY_FUNCTION__ to get the demangled name
+// of the current function in the NOTIMPLEMENTED message.
+#define NOTIMPLEMENTED_MSG "Not implemented reached in " << __PRETTY_FUNCTION__
+#else
+#define NOTIMPLEMENTED_MSG "NOT IMPLEMENTED"
+#endif
+
+#define NOTIMPLEMENTED() DLOG(ERROR) << NOTIMPLEMENTED_MSG
+
 #endif  // BASE_LOGGING_H_

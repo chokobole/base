@@ -176,7 +176,7 @@ int TCPSocketPosix::Accept(std::unique_ptr<TCPSocketPosix>* tcp_socket,
   int rv = socket_->Accept(
       &accept_socket_,
       CompletionOnceCallback([this, tcp_socket, address, callback](int rv) {
-        this->AcceptCompleted(tcp_socket, address, callback, rv);
+        AcceptCompleted(tcp_socket, address, callback, rv);
       }));
   if (rv != ERR_IO_PENDING) rv = HandleAcceptCompleted(tcp_socket, address, rv);
   return rv;

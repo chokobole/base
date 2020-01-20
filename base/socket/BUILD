@@ -101,6 +101,17 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "server_socket",
+    srcs = ["server_socket.cc"],
+    hdrs = ["server_socket.h"],
+    deps = [
+        ":socket_errors",
+        ":ip_endpoint",
+        "//base:completion_once_callback",
+    ],
+)
+
+base_cc_library(
     name = "sockaddr_storage",
     srcs = ["sockaddr_storage.cc"],
     hdrs = ["sockaddr_storage.h"],
@@ -108,6 +119,15 @@ base_cc_library(
     deps = [
         "//base:build_config",
         "//base:export",
+    ],
+)
+
+base_cc_library(
+    name = "socket",
+    hdrs = ["socket.h"],
+    deps = [
+        "//base:export",
+        "//base:completion_once_callback",
     ],
 )
 
@@ -152,6 +172,18 @@ base_cc_library(
     deps = [
         ":socket_descriptor",
         ":socket_errors",
+    ],
+)
+
+base_cc_library(
+    name = "stream_socket",
+    srcs = ["stream_socket.cc"],
+    hdrs = ["stream_socket.h"],
+    deps = [
+        ":socket",
+        ":socket_errors",
+        ":ip_endpoint",
+        "//base:completion_once_callback",
     ],
 )
 
@@ -212,6 +244,32 @@ base_cc_library(
         ":socket_options",
         "@com_google_absl//absl/time",
         "@com_google_absl//absl/random",
+    ],
+)
+
+base_cc_library(
+    name = "unix_domain_socket",
+    srcs = if_windows(
+        [
+        ],
+        [
+            "unix_domain_client_socket_posix.cc",
+            "unix_domain_server_socket_posix.cc",
+        ],
+    ),
+    hdrs = if_windows(
+        [
+        ],
+        [
+            "unix_domain_client_socket_posix.h",
+            "unix_domain_server_socket_posix.h",
+        ],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        ":platform_socket",
+        ":server_socket",
+        ":stream_socket",
     ],
 )
 

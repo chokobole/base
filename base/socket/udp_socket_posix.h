@@ -45,7 +45,7 @@ class BASE_EXPORT UDPSocketPosix {
   // Sendresult is inspired by sendmmsg, but unlike sendmmsg it is not
   // convenient to require that a positive |write_count| and a negative
   // error code are mutually exclusive.
-  struct SendResult {
+  struct BASE_EXPORT SendResult {
     explicit SendResult();
     ~SendResult();
     SendResult(int rv, int write_count, DatagramBuffers buffers);
@@ -59,7 +59,7 @@ class BASE_EXPORT UDPSocketPosix {
     DatagramBuffers buffers;
   };
 
-  class Sender {
+  class BASE_EXPORT Sender {
    public:
     Sender();
     Sender(const Sender& other) = delete;

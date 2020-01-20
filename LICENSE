@@ -42,9 +42,11 @@ base/io_buffer.cc:
 base/stl_util.h:
 base/template_util.h:
 base/socket/datagram_socket.h:
+base/socket/server_socket.h:
 base/socket/socket.h:
 base/socket/socket_errors_posix.cc:
 base/socket/socket_errors_win.cc:
+base/socket/stream_socket.cc:
 base/socket/udp_socket.h:
 base/socket/winsock_init.cc:
 base/socket/winsock_init.h:
@@ -72,6 +74,7 @@ base/socket/ip_endpoint_unittest.cc:
 base/socket/socket_error_list.h:
 base/socket/socket_errors.cc:
 base/socket/socket_errors.h:
+base/socket/stream_socket.h:
 base/socket/udp_socket_posix.cc:
 base/socket/udp_socket_posix.h:
 base/thread/thread_local_storage.h:
@@ -89,6 +92,11 @@ base/socket/tcp_socket_posix.h:
 base/macros.h:
 base/socket/socket_posix.cc:
 base/socket/socket_posix.h:
+base/socket/server_socket.cc:
+base/socket/unix_domain_client_socket_posix.cc:
+base/socket/unix_domain_client_socket_posix.h:
+base/socket/unix_domain_server_socket_posix.cc:
+base/socket/unix_domain_server_socket_posix.h:
   Copyright 2014 The Chromium Authors.
 
 base/socket/ip_address.cc:
