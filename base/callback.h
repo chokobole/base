@@ -12,10 +12,11 @@
 #include <functional>
 #include <type_traits>
 
+#include "base/callback_forward.h"
+
 using namespace std::placeholders;
 
-template <typename R, typename... Args>
-class OnceCallback;
+namespace base {
 
 template <typename R, typename... Args>
 class OnceCallback<R(Args...)> {
@@ -47,9 +48,6 @@ class OnceCallback<R(Args...)> {
 };
 
 template <typename R, typename... Args>
-class RepeatingCallback;
-
-template <typename R, typename... Args>
 class RepeatingCallback<R(Args...)> {
  public:
   typedef std::function<R(Args...)> CallbackTy;
@@ -79,5 +77,7 @@ class RepeatingCallback<R(Args...)> {
 
   CallbackTy callback_;
 };
+
+}  // namespace base
 
 #endif  // BASE_CALLBACK_H_

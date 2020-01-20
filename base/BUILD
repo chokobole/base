@@ -14,7 +14,10 @@ base_cc_library(
 
 base_cc_library(
     name = "callback",
-    hdrs = ["callback.h"],
+    hdrs = [
+        "callback.h",
+        "callback_forward.h",
+    ],
     visibility = ["//visibility:public"],
 )
 
