@@ -128,3 +128,7 @@ SOCKET_ERROR(READ_IF_READY_NOT_IMPLEMENTED, -174)
 
 // No socket buffer space is available.
 SOCKET_ERROR(NO_BUFFER_SPACE, -176)
+
+// An operation could not be completed because all network IO
+// is suspended.
+SOCKET_ERROR(NETWORK_IO_SUSPENDED, -331)

@@ -70,7 +70,8 @@ class BASE_EXPORT SocketPosix : public EventLoop::FdWatcher {
   // be retried later, |callback| will be invoked when data is ready for
   // reading. This method doesn't hold on to |buf|.
   // See socket.h for more information.
-  int ReadIfReady(IOBuffer* buf, int buf_len, CompletionOnceCallback callback);
+  int ReadIfReady(std::shared_ptr<IOBuffer> buf, int buf_len,
+                  CompletionOnceCallback callback);
   int CancelReadIfReady();
 
   int Write(std::shared_ptr<IOBuffer> buf, int buf_len,

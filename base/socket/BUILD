@@ -199,14 +199,21 @@ base_cc_library(
 
 base_cc_library(
     name = "tcp_socket",
-    srcs = if_windows(
+    srcs = [
+        "tcp_client_socket.cc",
+        "tcp_server_socket.cc",
+    ] + if_windows(
         [
         ],
         [
             "tcp_socket_posix.cc",
         ],
     ),
-    hdrs = ["tcp_socket.h"] + if_windows(
+    hdrs = [
+        "tcp_client_socket.h",
+        "tcp_server_socket.h",
+        "tcp_socket.h",
+    ] + if_windows(
         [
         ],
         [
@@ -217,7 +224,9 @@ base_cc_library(
     deps = [
         ":address_list",
         ":platform_socket",
+        ":server_socket",
         ":socket_options",
+        ":transport_client_socket",
         "@com_google_absl//absl/time",
     ],
 )

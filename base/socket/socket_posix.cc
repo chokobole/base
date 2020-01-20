@@ -234,8 +234,8 @@ bool SocketPosix::IsConnectedAndIdle() const {
 
 int SocketPosix::Read(std::shared_ptr<IOBuffer> buf, int buf_len,
                       CompletionOnceCallback callback) {
-  int rv = ReadIfReady(buf.get(), buf_len,
-                       std::bind(&SocketPosix::RetryRead, this, _1));
+  int rv =
+      ReadIfReady(buf, buf_len, std::bind(&SocketPosix::RetryRead, this, _1));
   if (rv == ERR_IO_PENDING) {
     read_buf_ = buf;
     read_buf_len_ = buf_len;
@@ -244,7 +244,7 @@ int SocketPosix::Read(std::shared_ptr<IOBuffer> buf, int buf_len,
   return rv;
 }
 
-int SocketPosix::ReadIfReady(IOBuffer* buf, int buf_len,
+int SocketPosix::ReadIfReady(std::shared_ptr<IOBuffer> buf, int buf_len,
                              CompletionOnceCallback callback) {
   DCHECK_NE(kInvalidSocket, socket_fd_);
   DCHECK(!waiting_connect_);
@@ -252,7 +252,7 @@ int SocketPosix::ReadIfReady(IOBuffer* buf, int buf_len,
   DCHECK(!callback.is_null());
   DCHECK_LT(0, buf_len);
 
-  int rv = DoRead(buf, buf_len);
+  int rv = DoRead(buf.get(), buf_len);
   if (rv != ERR_IO_PENDING) return rv;
 
   if (!EventLoop::Current()->WatchFileDescriptor(socket_fd_, true,
@@ -424,7 +424,7 @@ void SocketPosix::RetryRead(int rv) {
   DCHECK_LT(0, read_buf_len_);
 
   if (rv == OK) {
-    rv = ReadIfReady(read_buf_.get(), read_buf_len_,
+    rv = ReadIfReady(read_buf_, read_buf_len_,
                      std::bind(&SocketPosix::RetryRead, this, _1));
     if (rv == ERR_IO_PENDING) return;
   }

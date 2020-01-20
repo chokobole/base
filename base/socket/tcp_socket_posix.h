@@ -78,7 +78,8 @@ class BASE_EXPORT TCPSocketPosix {
   // Returns a net error code.
   int Read(std::shared_ptr<IOBuffer> buf, int buf_len,
            CompletionOnceCallback callback);
-  int ReadIfReady(IOBuffer* buf, int buf_len, CompletionOnceCallback callback);
+  int ReadIfReady(std::shared_ptr<IOBuffer> buf, int buf_len,
+                  CompletionOnceCallback callback);
   int CancelReadIfReady();
 
   // Writes to the socket.

@@ -47,6 +47,8 @@ base/socket/socket.h:
 base/socket/socket_errors_posix.cc:
 base/socket/socket_errors_win.cc:
 base/socket/stream_socket.cc:
+base/socket/tcp_client_socket.h:
+base/socket/tcp_server_socket.h:
 base/socket/udp_socket.h:
 base/socket/winsock_init.cc:
 base/socket/winsock_init.h:
@@ -87,7 +89,11 @@ base/socket/socket_dsecriptor.h:
 base/socket/tcp_socket.h:
 base/socket/tcp_socket_posix.cc:
 base/socket/tcp_socket_posix.h:
+base/socket/tcp_server_socket.cc:
   Copyright 2013 The Chromium Authors.
+
+base/socket/tcp_client_socket.cc:
+  Copyright (c) 2013 The Chromium Authors.
 
 base/macros.h:
 base/socket/socket_posix.cc:

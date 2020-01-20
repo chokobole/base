@@ -207,7 +207,7 @@ int TCPSocketPosix::Read(std::shared_ptr<IOBuffer> buf, int buf_len,
   return socket_->Read(buf, buf_len, std::move(callback));
 }
 
-int TCPSocketPosix::ReadIfReady(IOBuffer* buf, int buf_len,
+int TCPSocketPosix::ReadIfReady(std::shared_ptr<IOBuffer> buf, int buf_len,
                                 CompletionOnceCallback callback) {
   DCHECK(socket_);
   DCHECK(!callback.is_null());
