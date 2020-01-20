@@ -223,6 +223,13 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "transport_client_socket",
+    srcs = ["transport_client_socket.cc"],
+    hdrs = ["transport_client_socket.h"],
+    deps = [":stream_socket"],
+)
+
+base_cc_library(
     name = "udp_socket",
     srcs = if_windows(
         [
