@@ -59,6 +59,8 @@ base/socket/winsock_init.cc:
 base/socket/winsock_init.h:
 base/socket/winsock_util.cc:
 base/socket/winsock_util.h:
+base/test/scoped_locale.cc:
+base/test/scoped_locale.h:
 base/thread/thread_local.h:
   Copyright (c) 2011 The Chromium Authors.
 
