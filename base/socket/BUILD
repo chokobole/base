@@ -208,24 +208,22 @@ base_cc_library(
 
 base_cc_library(
     name = "tcp_socket",
-    srcs = [
-        "tcp_client_socket.cc",
-        "tcp_server_socket.cc",
-    ] + if_windows(
+    srcs = if_windows(
         [
         ],
         [
+            "tcp_client_socket.cc",
+            "tcp_server_socket.cc",
             "tcp_socket_posix.cc",
         ],
     ),
-    hdrs = [
-        "tcp_client_socket.h",
-        "tcp_server_socket.h",
-        "tcp_socket.h",
-    ] + if_windows(
+    hdrs = if_windows(
         [
         ],
         [
+            "tcp_client_socket.h",
+            "tcp_server_socket.h",
+            "tcp_socket.h",
             "tcp_socket_posix.h",
         ],
     ),
@@ -249,24 +247,22 @@ base_cc_library(
 
 base_cc_library(
     name = "udp_socket",
-    srcs = [
-        "udp_client_socket.cc",
-        "udp_server_socket.cc",
-    ] +if_windows(
+    srcs = if_windows(
         [
         ],
         [
+            "udp_client_socket.cc",
+            "udp_server_socket.cc",
             "udp_socket_posix.cc",
         ],
     ),
-    hdrs = [
-        "udp_client_socket.h",
-        "udp_server_socket.h",
-        "udp_socket.h",
-    ] + if_windows(
+    hdrs = if_windows(
         [
         ],
         [
+            "udp_client_socket.h",
+            "udp_server_socket.h",
+            "udp_socket.h",
             "udp_socket_posix.h",
         ],
     ),
