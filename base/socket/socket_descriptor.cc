@@ -12,7 +12,7 @@
 #include <ws2tcpip.h>
 
 #include "base/socket/winsock_init.h"
-#elif defined(OS_POSIX) || defined(OS_FUCHSIA)
+#elif defined(OS_POSIX)
 #include <sys/socket.h>
 #include <sys/types.h>
 #endif
