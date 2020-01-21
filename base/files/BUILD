@@ -1,5 +1,23 @@
-load("//bazel:base_cc.bzl", "base_cc_library")
+load("//bazel:base_cc.bzl", "base_cc_library", "base_cc_test")
 load("@com_chokobole_bazel_utils//:conditions.bzl", "if_windows")
+
+base_cc_library(
+    name = "file_path",
+    srcs = [
+        "file_path.cc",
+        "file_path_constants.cc",
+    ],
+    hdrs = ["file_path.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//base:build_config",
+        "//base:compiler_specific",
+        "//base:export",
+        "//base:logging",
+        "//base:stl_util",
+        "@com_google_absl//absl/strings",
+    ],
+)
 
 base_cc_library(
     name = "file_util",
@@ -16,5 +34,16 @@ base_cc_library(
     deps = [
         "//base:export",
         "//base/posix:eintr_wrapper",
+    ],
+)
+
+base_cc_test(
+    name = "files_unittests",
+    srcs = [
+        "file_path_unittest.cc",
+    ],
+    deps = [
+        ":file_path",
+        "@com_google_googletest//:gtest_main",
     ],
 )
