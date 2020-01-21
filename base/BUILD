@@ -90,6 +90,16 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "scoped_generic",
+    hdrs = ["scoped_generic.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":compiler_specific",
+        ":logging",
+    ],
+)
+
+base_cc_library(
     name = "stl_util",
     hdrs = ["stl_util.h"],
     visibility = ["//visibility:public"],
@@ -138,11 +148,14 @@ base_cc_test(
     srcs = [
         "auto_reset_unittest.cc",
         "data_view_unittest.cc",
+        "scoped_generic_unittest.cc",
         "sys_byteorder_unittest.cc",
     ],
     deps = [
         ":auto_reset",
         ":data_view",
+        ":scoped_generic",
+        ":stl_util",
         ":sys_byteorder",
         "@com_google_googletest//:gtest_main",
     ],

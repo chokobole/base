@@ -112,6 +112,8 @@ base/socket/tcp_client_socket.cc:
   Copyright (c) 2013 The Chromium Authors.
 
 base/macros.h:
+base/scoped_generic.h:
+base/scoped_generic_unittest.cc:
 base/socket/socket_posix.cc:
 base/socket/socket_posix.h:
 base/socket/server_socket.cc:
