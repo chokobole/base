@@ -91,6 +91,7 @@ base/socket/udp_server_socket.h:
 base/thread/thread_local_storage.h:
 base/thread/thread_local_storage_posix.cc:
 base/thread/thread_local_storage_win.cc:
+base/win/scoped_handle.h:
   Copyright (c) 2012 The Chromium Authors.
 
 base/socket/socket_dsecriptor.cc:
