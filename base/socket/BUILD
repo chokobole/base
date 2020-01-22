@@ -82,7 +82,7 @@ base_cc_library(
 )
 
 base_cc_library(
-    name = "platform_socket",
+    name = "socket_posix",
     srcs = if_windows(
         [
         ],
@@ -231,9 +231,9 @@ base_cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":address_list",
-        ":platform_socket",
         ":server_socket",
         ":socket_options",
+        ":socket_posix",
         ":transport_client_socket",
         "@com_google_absl//absl/functional:bind_front",
         "@com_google_absl//absl/time",
@@ -271,8 +271,8 @@ base_cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":datagram_socket",
-        ":platform_socket",
         ":socket_options",
+        ":socket_posix",
         "@com_google_absl//absl/random",
         "@com_google_absl//absl/time",
     ],
@@ -298,8 +298,8 @@ base_cc_library(
     ),
     visibility = ["//visibility:public"],
     deps = [
-        ":platform_socket",
         ":server_socket",
+        ":socket_posix",
         ":stream_socket",
         "@com_google_absl//absl/functional:bind_front",
     ],
