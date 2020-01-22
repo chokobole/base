@@ -30,7 +30,10 @@
 #define TCPI_OPT_SYN_DATA 32
 #endif
 
-#if defined(TCP_INFO)
+// Fuchsia defines TCP_INFO, but it's not implemented.
+// TODO(crbug.com/758294): Enable TCP_INFO on Fuchsia once it's implemented
+// there (see NET-160).
+#if defined(TCP_INFO) && !defined(OS_FUCHSIA)
 #define HAVE_TCP_INFO
 #endif
 

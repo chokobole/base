@@ -12,7 +12,7 @@
 #include <ws2tcpip.h>
 
 #include "base/socket/winsock_init.h"
-#elif defined(OS_POSIX)
+#elif defined(OS_POSIX) || defined(OS_FUCHSIA)
 #include <sys/socket.h>
 #include <sys/types.h>
 #endif
@@ -37,7 +37,7 @@ SocketDescriptor CreatePlatformSocket(int family, int type, int protocol) {
     }
   }
   return result;
-#elif defined(OS_POSIX)
+#elif defined(OS_POSIX) || defined(OS_FUCHSIA)
   SocketDescriptor result = ::socket(family, type, protocol);
 #if defined(OS_MACOSX)
   // Disable SIGPIPE on this socket. SO_NOSIGPIPE is a Mac-only API. On Linux,

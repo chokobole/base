@@ -30,14 +30,14 @@
 // absl::StrFormat("Path is %" PRFilePath ".\n", path.value().c_str());
 #if defined(OS_WIN)
 #define PRFilePath "ls"
-#elif defined(OS_POSIX)
+#elif defined(OS_POSIX) || defined(OS_FUCHSIA)
 #define PRFilePath "s"
 #endif  // OS_WIN
 
 // Macros for string literal initialization.
 #if defined(OS_WIN)
 #define FILE_PATH_LITERAL(x) L##x
-#elif defined(OS_POSIX)
+#elif defined(OS_POSIX) || defined(OS_FUCHSIA)
 #define FILE_PATH_LITERAL(x) x
 #endif  // OS_WIN
 

@@ -35,6 +35,8 @@
 #define OS_LINUX 1
 #elif defined(_WIN32)
 #define OS_WIN 1
+#elif defined(__Fuchsia__)
+#define OS_FUCHSIA 1
 #elif defined(__FreeBSD__)
 #define OS_FREEBSD 1
 #elif defined(__NetBSD__)

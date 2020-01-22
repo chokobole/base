@@ -19,6 +19,11 @@
 #include "base/posix/eintr_wrapper.h"
 #include "base/socket/socket_errors.h"
 
+#if defined(OS_FUCHSIA)
+#include <poll.h>
+#include <sys/ioctl.h>
+#endif  // OS_FUCHSIA
+
 namespace base {
 
 namespace {

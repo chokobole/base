@@ -14,7 +14,7 @@
 #include "base/build_config.h"
 #include "base/export.h"
 
-#if defined(OS_POSIX)
+#if defined(OS_POSIX) || defined(OS_FUCHSIA)
 #include <pthread.h>
 #endif
 
@@ -31,7 +31,7 @@ class BASE_EXPORT PlatformThreadLocalStorage {
  public:
 #if defined(OS_WIN)
   typedef unsigned long TLSKey;
-#elif defined(OS_POSIX)
+#elif defined(OS_POSIX) || defined(OS_FUCHSIA)
   typedef pthread_key_t TLSKey;
 #endif
 

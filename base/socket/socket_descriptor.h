@@ -21,7 +21,7 @@ namespace base {
 #if defined(OS_WIN)
 typedef SOCKET SocketDescriptor;
 const SocketDescriptor kInvalidSocket = INVALID_SOCKET;
-#elif defined(OS_POSIX)
+#elif defined(OS_POSIX) || defined(OS_FUCHSIA)
 typedef int SocketDescriptor;
 const SocketDescriptor kInvalidSocket = -1;
 #endif

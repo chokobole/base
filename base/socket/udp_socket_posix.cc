@@ -810,7 +810,11 @@ int UDPSocketPosix::JoinGroup(const IPAddress& group_address) const {
     case IPAddress::kIPv6AddressSize: {
       if (addr_family_ != AF_INET6) return ERR_ADDRESS_INVALID;
       ipv6_mreq mreq;
+#if defined(OS_FUCHSIA)
       mreq.ipv6mr_interface = multicast_interface_;
+#else   // defined(OS_FUCHSIA)
+      mreq.ipv6mr_interface = 0;  // 0 indicates default multicast interface.
+#endif  // !defined(OS_FUCHSIA)
       memcpy(&mreq.ipv6mr_multiaddr, group_address.bytes().data(),
              IPAddress::kIPv6AddressSize);
       int rv = setsockopt(socket_, IPPROTO_IPV6, IPV6_JOIN_GROUP, &mreq,

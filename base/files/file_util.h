@@ -22,14 +22,14 @@ namespace base {
 // false.
 BASE_EXPORT bool SetNonBlocking(int fd);
 
-#if defined(OS_POSIX)
+#if defined(OS_POSIX) || defined(OS_FUCHSIA)
 
 // Sets the given |fd| to close-on-exec mode.
 // Returns true if it was able to set it in the close-on-exec mode, otherwise
 // false.
 BASE_EXPORT bool SetCloseOnExec(int fd);
 
-#endif
+#endif  // defined(OS_POSIX) || defined(OS_FUCHSIA)
 
 }  // namespace base
 

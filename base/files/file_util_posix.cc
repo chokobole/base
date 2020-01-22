@@ -14,6 +14,14 @@
 
 namespace base {
 
+// bool DeleteFile(const FilePath& path) {
+//   return DoDeleteFile(path, recursive);
+// }
+
+// bool DeleteFileRecursively(const FilePath& path) {
+//   return DoDeleteFile(path, /*recursive=*/true);
+// }
+
 bool SetNonBlocking(int fd) {
   const int flags = fcntl(fd, F_GETFL);
   if (flags == -1) return false;

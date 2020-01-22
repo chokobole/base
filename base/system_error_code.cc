@@ -29,7 +29,7 @@ typedef DWORD SystemErrorCode;
 SystemErrorCode GetLastSystemErrorCode() {
 #if defined(OS_WIN)
   return ::GetLastError();
-#elif defined(OS_POSIX)
+#elif defined(OS_POSIX) || defined(OS_FUCHSIA)
   return errno;
 #endif
 }
@@ -49,7 +49,7 @@ std::string SystemErrorCodeToString(SystemErrorCode error_code) {
   }
   return absl::StrFormat("Error (0x%lX) while retrieving error. (0x%lX)",
                          GetLastError(), error_code);
-#elif defined(OS_POSIX)
+#elif defined(OS_POSIX) || defined(OS_FUCHSIA)
   return google::StrError(error_code) + absl::StrFormat(" (%d)", error_code);
 #endif  // defined(OS_WIN)
 }
