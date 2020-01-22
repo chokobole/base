@@ -106,6 +106,7 @@ base_cc_library(
         "//base:io_buffer",
         "//base/event_loop",
         "//base/files:file_util",
+        "@com_google_absl//absl/functional:bind_front",
     ],
 )
 
@@ -234,6 +235,7 @@ base_cc_library(
         ":server_socket",
         ":socket_options",
         ":transport_client_socket",
+        "@com_google_absl//absl/functional:bind_front",
         "@com_google_absl//absl/time",
     ],
 )
@@ -299,6 +301,7 @@ base_cc_library(
         ":platform_socket",
         ":server_socket",
         ":stream_socket",
+        "@com_google_absl//absl/functional:bind_front",
     ],
 )
 

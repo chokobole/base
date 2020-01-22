@@ -54,13 +54,13 @@ class BASE_EXPORT TCPServerSocket : public ServerSocket {
       int result, std::unique_ptr<StreamSocket>* output_accepted_socket);
   // Completion callback for calling TCPSocket::Accept().
   void OnAcceptCompleted(std::unique_ptr<StreamSocket>* output_accepted_socket,
-                         CompletionOnceCallback forward_callback, int result);
+                         int result);
 
   std::unique_ptr<TCPSocket> socket_;
 
   std::unique_ptr<TCPSocket> accepted_socket_;
   IPEndPoint accepted_address_;
-  bool pending_accept_;
+  CompletionOnceCallback accept_callback_;
 };
 
 }  // namespace base

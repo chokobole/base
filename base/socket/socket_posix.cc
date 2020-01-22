@@ -14,6 +14,7 @@
 
 #include <utility>
 
+#include "absl/functional/bind_front.h"
 #include "base/files/file_util.h"
 #include "base/logging.h"
 #include "base/posix/eintr_wrapper.h"
@@ -239,8 +240,8 @@ bool SocketPosix::IsConnectedAndIdle() const {
 
 int SocketPosix::Read(std::shared_ptr<IOBuffer> buf, int buf_len,
                       CompletionOnceCallback callback) {
-  int rv =
-      ReadIfReady(buf, buf_len, std::bind(&SocketPosix::RetryRead, this, _1));
+  int rv = ReadIfReady(buf, buf_len,
+                       absl::bind_front(&SocketPosix::RetryRead, this));
   if (rv == ERR_IO_PENDING) {
     read_buf_ = buf;
     read_buf_len_ = buf_len;
@@ -430,7 +431,7 @@ void SocketPosix::RetryRead(int rv) {
 
   if (rv == OK) {
     rv = ReadIfReady(read_buf_, read_buf_len_,
-                     std::bind(&SocketPosix::RetryRead, this, _1));
+                     absl::bind_front(&SocketPosix::RetryRead, this));
     if (rv == ERR_IO_PENDING) return;
   }
   read_buf_ = nullptr;

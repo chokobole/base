@@ -12,6 +12,7 @@
 
 #include <algorithm>
 
+#include "absl/functional/bind_front.h"
 #include "base/build_config.h"
 #include "base/files/file_util.h"
 #include "base/io_buffer.h"
@@ -172,14 +173,15 @@ int TCPSocketPosix::Accept(std::unique_ptr<TCPSocketPosix>* tcp_socket,
                            CompletionOnceCallback callback) {
   DCHECK(tcp_socket);
   DCHECK(!callback.is_null());
+  DCHECK(accept_callback_.is_null());
   DCHECK(socket_);
   DCHECK(!accept_socket_);
 
-  int rv = socket_->Accept(&accept_socket_,
-                           [this, tcp_socket, address, callback](int rv) {
-                             AcceptCompleted(tcp_socket, address, callback, rv);
-                           });
+  int rv = socket_->Accept(
+      &accept_socket_, absl::bind_front(&TCPSocketPosix::AcceptCompleted, this,
+                                        tcp_socket, address));
   if (rv != ERR_IO_PENDING) rv = HandleAcceptCompleted(tcp_socket, address, rv);
+  accept_callback_ = std::move(callback);
   return rv;
 }
 
@@ -330,10 +332,11 @@ bool TCPSocketPosix::IsValid() const {
 }
 
 void TCPSocketPosix::AcceptCompleted(
-    std::unique_ptr<TCPSocketPosix>* tcp_socket, IPEndPoint* address,
-    CompletionOnceCallback callback, int rv) {
+    std::unique_ptr<TCPSocketPosix>* tcp_socket, IPEndPoint* address, int rv) {
+  DCHECK(!accept_callback_.is_null());
   DCHECK_NE(ERR_IO_PENDING, rv);
-  std::move(callback).Run(HandleAcceptCompleted(tcp_socket, address, rv));
+  std::move(accept_callback_)
+      .Run(HandleAcceptCompleted(tcp_socket, address, rv));
 }
 
 int TCPSocketPosix::HandleAcceptCompleted(

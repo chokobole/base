@@ -119,8 +119,7 @@ class BASE_EXPORT TCPSocketPosix {
 
  private:
   void AcceptCompleted(std::unique_ptr<TCPSocketPosix>* tcp_socket,
-                       IPEndPoint* address, CompletionOnceCallback callback,
-                       int rv);
+                       IPEndPoint* address, int rv);
   int HandleAcceptCompleted(std::unique_ptr<TCPSocketPosix>* tcp_socket,
                             IPEndPoint* address, int rv);
   int BuildTcpSocketPosix(std::unique_ptr<TCPSocketPosix>* tcp_socket,
@@ -128,6 +127,7 @@ class BASE_EXPORT TCPSocketPosix {
 
   std::unique_ptr<SocketPosix> socket_;
   std::unique_ptr<SocketPosix> accept_socket_;
+  CompletionOnceCallback accept_callback_;
 };
 
 }  // namespace base

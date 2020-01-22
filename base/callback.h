@@ -12,9 +12,8 @@
 #include <functional>
 #include <type_traits>
 
+#include "absl/functional/function_ref.h"
 #include "base/callback_forward.h"
-
-using namespace std::placeholders;
 
 namespace base {
 
@@ -23,14 +22,17 @@ class OnceCallback<R(Args...)> {
  public:
   typedef std::function<R(Args...)> CallbackTy;
 
-  OnceCallback() = default;
-  OnceCallback(CallbackTy callback) : callback_(callback) {}
+  constexpr OnceCallback() = default;
+  OnceCallback(std::nullptr_t) = delete;
+  OnceCallback(absl::FunctionRef<R(Args...)> callback) : callback_(callback) {}
   template <
       typename T,
       std::enable_if_t<std::is_convertible<T, CallbackTy>::value>* = nullptr>
   OnceCallback(T&& callback) : callback_(callback) {}
-  OnceCallback(const OnceCallback& other) = default;
-  OnceCallback& operator=(const OnceCallback& other) = default;
+  OnceCallback(const OnceCallback& other) = delete;
+  OnceCallback& operator=(const OnceCallback& other) = delete;
+  OnceCallback(OnceCallback&& other) noexcept = default;
+  OnceCallback& operator=(OnceCallback&& other) noexcept = default;
 
   R Run(Args... args) && {
     CallbackTy callback = callback_;
@@ -44,6 +46,7 @@ class OnceCallback<R(Args...)> {
 
   void Reset() { callback_ = nullptr; }
 
+ private:
   CallbackTy callback_;
 };
 
@@ -52,8 +55,10 @@ class RepeatingCallback<R(Args...)> {
  public:
   typedef std::function<R(Args...)> CallbackTy;
 
-  RepeatingCallback() = default;
-  RepeatingCallback(CallbackTy callback) : callback_(callback) {}
+  constexpr RepeatingCallback() = default;
+  RepeatingCallback(std::nullptr_t) = delete;
+  RepeatingCallback(absl::FunctionRef<R(Args...)> callback)
+      : callback_(callback) {}
   template <
       typename T,
       std::enable_if_t<std::is_convertible<T, CallbackTy>::value>* = nullptr>
@@ -75,6 +80,7 @@ class RepeatingCallback<R(Args...)> {
 
   void Reset() { callback_ = nullptr; }
 
+ private:
   CallbackTy callback_;
 };
 

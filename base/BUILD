@@ -19,6 +19,7 @@ base_cc_library(
         "callback_forward.h",
     ],
     visibility = ["//visibility:public"],
+    deps = ["@com_google_absl//absl/functional:function_ref"],
 )
 
 base_cc_library(

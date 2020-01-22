@@ -9,6 +9,8 @@ def base_deps():
             urls = [
                 "https://github.com/abseil/abseil-cpp/archive/aa844899c937bde5d2b24f276b59997e5b668bde.zip",  # 20190808
             ],
+            patch_args = ["-p1"],
+            patches = ["@com_chokobole_base//third_party:abseil-cpp.patch"],
         )
 
     if not native.existing_rule("com_chokobole_bazel_utils"):

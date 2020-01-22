@@ -10,6 +10,7 @@
 
 #include <utility>
 
+#include "absl/functional/bind_front.h"
 #include "absl/memory/memory.h"
 #include "base/io_buffer.h"
 #include "base/logging.h"
@@ -128,7 +129,7 @@ int TCPClientSocket::ReadCommon(std::shared_ptr<IOBuffer> buf, int buf_len,
   // |socket_| is owned by |this| and the callback won't be run once |socket_|
   // is gone/closed.
   CompletionOnceCallback complete_read_callback(
-      std::bind(&TCPClientSocket::DidCompleteRead, this, _1));
+      absl::bind_front(&TCPClientSocket::DidCompleteRead, this));
   int result =
       read_if_ready
           ? socket_->ReadIfReady(buf, buf_len,
@@ -230,7 +231,7 @@ int TCPClientSocket::ConnectInternal(const IPEndPoint& endpoint) {
   // |socket_| is owned by this class and the callback won't be run once
   // |socket_| is gone.
   return socket_->Connect(
-      endpoint, std::bind(&TCPClientSocket::DidCompleteConnect, this, _1));
+      endpoint, absl::bind_front(&TCPClientSocket::DidCompleteConnect, this));
 }
 
 void TCPClientSocket::Disconnect() {
@@ -308,7 +309,7 @@ int TCPClientSocket::Write(std::shared_ptr<IOBuffer> buf, int buf_len,
   // |socket_| is owned by this class and the callback won't be run once
   // |socket_| is gone.
   int result = socket_->Write(
-      buf, buf_len, std::bind(&TCPClientSocket::DidCompleteWrite, this, _1));
+      buf, buf_len, absl::bind_front(&TCPClientSocket::DidCompleteWrite, this));
   if (result == ERR_IO_PENDING) {
     write_callback_ = std::move(callback);
   } else if (result > 0) {

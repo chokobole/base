@@ -15,6 +15,7 @@
 
 #include <utility>
 
+#include "absl/functional/bind_front.h"
 #include "base/build_config.h"
 #include "base/logging.h"
 #include "base/socket/sockaddr_storage.h"
@@ -122,9 +123,7 @@ int UnixDomainServerSocket::Accept(std::unique_ptr<StreamSocket>* socket,
   DCHECK(callback);
   DCHECK(!callback_);
 
-  int rv = DoAccept([socket](std::unique_ptr<SocketPosix> accepted_socket) {
-    SetStreamSocket(socket, std::move(accepted_socket));
-  });
+  int rv = DoAccept(absl::bind_front(&SetStreamSocket, socket));
   if (rv == ERR_IO_PENDING) callback_ = std::move(callback);
   return rv;
 }
@@ -135,9 +134,7 @@ int UnixDomainServerSocket::AcceptSocketDescriptor(
   DCHECK(callback);
   DCHECK(!callback_);
 
-  int rv = DoAccept([socket](std::unique_ptr<SocketPosix> accepted_socket) {
-    SetSocketDescriptor(socket, std::move(accepted_socket));
-  });
+  int rv = DoAccept(absl::bind_front(&SetSocketDescriptor, socket));
   if (rv == ERR_IO_PENDING) callback_ = std::move(callback);
   return rv;
 }
@@ -148,10 +145,10 @@ int UnixDomainServerSocket::DoAccept(const SetterCallback& setter_callback) {
   DCHECK(!accept_socket_);
 
   while (true) {
-    int rv = listen_socket_->Accept(&accept_socket_,
-                                    [this, setter_callback](int rv) {
-                                      AcceptCompleted(setter_callback, rv);
-                                    });
+    int rv = listen_socket_->Accept(
+        &accept_socket_,
+        absl::bind_front(&UnixDomainServerSocket::AcceptCompleted, this,
+                         setter_callback));
     if (rv != OK) return rv;
     if (AuthenticateAndGetStreamSocket(setter_callback)) return OK;
     // Accept another socket because authentication error should be transparent

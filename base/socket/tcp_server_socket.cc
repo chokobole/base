@@ -10,6 +10,7 @@
 
 #include <utility>
 
+#include "absl/functional/bind_front.h"
 #include "base/logging.h"
 #include "base/socket/socket_descriptor.h"
 #include "base/socket/socket_errors.h"
@@ -21,7 +22,7 @@ TCPServerSocket::TCPServerSocket()
     : TCPServerSocket(std::make_unique<TCPSocket>()) {}
 
 TCPServerSocket::TCPServerSocket(std::unique_ptr<TCPSocket> socket)
-    : socket_(std::move(socket)), pending_accept_(false) {}
+    : socket_(std::move(socket)) {}
 
 int TCPServerSocket::AdoptSocket(SocketDescriptor socket) {
   return socket_->AdoptUnconnectedSocket(socket);
@@ -62,26 +63,20 @@ int TCPServerSocket::Accept(std::unique_ptr<StreamSocket>* socket,
                             CompletionOnceCallback callback) {
   DCHECK(socket);
   DCHECK(!callback.is_null());
-
-  if (pending_accept_) {
-    NOTREACHED();
-    return ERR_UNEXPECTED;
-  }
+  DCHECK(accept_callback_.is_null());
 
   // |socket_| is owned by this class, and the callback won't be run after
   // |socket_| is destroyed.
-  CompletionOnceCallback accept_callback([this, socket, callback](int result) {
-    OnAcceptCompleted(socket, callback, result);
-  });
-  int result = socket_->Accept(&accepted_socket_, &accepted_address_,
-                               std::move(accept_callback));
+  int result = socket_->Accept(
+      &accepted_socket_, &accepted_address_,
+      absl::bind_front(&TCPServerSocket::OnAcceptCompleted, this, socket));
   if (result != ERR_IO_PENDING) {
     // |accept_callback| won't be called so we need to run
     // ConvertAcceptedSocket() ourselves in order to do the conversion from
     // |accepted_socket_| to |socket|.
     result = ConvertAcceptedSocket(result, socket);
   } else {
-    pending_accept_ = true;
+    accept_callback_ = std::move(callback);
   }
 
   return result;
@@ -100,11 +95,10 @@ int TCPServerSocket::ConvertAcceptedSocket(
 }
 
 void TCPServerSocket::OnAcceptCompleted(
-    std::unique_ptr<StreamSocket>* output_accepted_socket,
-    CompletionOnceCallback forward_callback, int result) {
+    std::unique_ptr<StreamSocket>* output_accepted_socket, int result) {
+  DCHECK(!accept_callback_.is_null());
   result = ConvertAcceptedSocket(result, output_accepted_socket);
-  pending_accept_ = false;
-  std::move(forward_callback).Run(result);
+  std::move(accept_callback_).Run(result);
 }
 
 }  // namespace base
