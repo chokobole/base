@@ -9,10 +9,9 @@
 #ifndef BASE_WIN_SCOPED_HANDLE_H_
 #define BASE_WIN_SCOPED_HANDLE_H_
 
-#include <windows.h>
-
 #include "base/compiler_specific.h"
 #include "base/logging.h"
+#include "base/win/windows_types.h"
 
 namespace base {
 namespace win {

@@ -5,7 +5,14 @@ base_cc_library(
     hdrs = ["scoped_handle.h"],
     visibility = ["//visibility:public"],
     deps = [
+        ":windows_types",
         "//base:compiler_specific",
         "//base:logging",
     ],
+)
+
+base_cc_library(
+    name = "windows_types",
+    hdrs = ["windows_types.h"],
+    visibility = ["//visibility:public"],
 )

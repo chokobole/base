@@ -123,6 +123,7 @@ base/socket/unix_domain_client_socket_posix.cc:
 base/socket/unix_domain_client_socket_posix.h:
 base/socket/unix_domain_server_socket_posix.cc:
 base/socket/unix_domain_server_socket_posix.h:
+base/win/windows_types.h:
   Copyright 2014 The Chromium Authors.
 
 base/socket/ip_address.cc:
