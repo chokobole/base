@@ -116,6 +116,9 @@ base/scoped_generic.h:
 base/scoped_generic_unittest.cc:
 base/files/scoped_file.cc:
 base/files/scoped_file.h:
+base/numerics/safe_conversions.h:
+base/numerics/safe_conversions_arm_impl.h:
+base/numerics/safe_conversions_impl.h:
 base/socket/socket_posix.cc:
 base/socket/socket_posix.h:
 base/socket/server_socket.cc:
