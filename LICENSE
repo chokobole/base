@@ -114,6 +114,8 @@ base/socket/tcp_client_socket.cc:
 base/macros.h:
 base/scoped_generic.h:
 base/scoped_generic_unittest.cc:
+base/files/scoped_file.cc:
+base/files/scoped_file.h:
 base/socket/socket_posix.cc:
 base/socket/socket_posix.h:
 base/socket/server_socket.cc:
@@ -150,6 +152,7 @@ base/socket/socket_options.h:
 
 base/completion_once_callback.h:
 base/no_destructor.h:
+base/files/scoped_file_android.cc:
 base/socket/datagram_buffer.cc:
 base/socket/datagram_buffer_unittest.cc:
 base/socket/transport_client_socket.cc:

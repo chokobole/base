@@ -1,5 +1,5 @@
 load("//bazel:base_cc.bzl", "base_cc_library", "base_cc_test")
-load("@com_chokobole_bazel_utils//:conditions.bzl", "if_windows")
+load("@com_chokobole_bazel_utils//:conditions.bzl", "if_android", "if_windows")
 
 base_cc_library(
     name = "file_path",
@@ -35,6 +35,27 @@ base_cc_library(
         "//base:export",
         "//base/posix:eintr_wrapper",
     ],
+)
+
+base_cc_library(
+    name = "scoped_file",
+    srcs = ["scoped_file.cc"] + if_android([
+        "scoped_file_android.cc",
+    ]),
+    hdrs = ["scoped_file.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//base:build_config",
+        "//base:export",
+        "//base:logging",
+        "//base:scoped_generic",
+        "@com_google_absl//absl/strings",
+    ] + if_windows(
+        [],
+        [
+            "//base/posix:eintr_wrapper",
+        ],
+    ),
 )
 
 base_cc_test(
