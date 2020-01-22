@@ -147,6 +147,7 @@ base/socket/socket_options.cc:
 baes/containers/flat_map.h:
 baes/containers/flat_set.h:
 baes/containers/flat_tree.h:
+base/files/platform_file.h:
 base/socket/socket.cc:
 base/socket/socket_options.h:
   Copyright 2017 The Chromium Authors.

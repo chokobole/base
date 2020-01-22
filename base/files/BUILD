@@ -38,6 +38,16 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "platform_file",
+    hdrs = ["platform_file.h"],
+    visibility = ["//visibility:public"],
+    deps = [":scoped_file"] + if_windows([
+        "//base/win:scoped_handle",
+        "//base/win:windows_types",
+    ]),
+)
+
+base_cc_library(
     name = "scoped_file",
     srcs = ["scoped_file.cc"] + if_android([
         "scoped_file_android.cc",
