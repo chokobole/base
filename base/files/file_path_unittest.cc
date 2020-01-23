@@ -130,7 +130,7 @@ TEST(FilePathTest, DirName) {
 #endif  // FILE_PATH_USES_WIN_SEPARATORS
   };
 
-  for (size_t i = 0; i < base::size(cases); ++i) {
+  for (size_t i = 0; i < size(cases); ++i) {
     FilePath input(cases[i].input);
     FilePath observed = input.DirName();
     EXPECT_EQ(std::string(cases[i].expected), observed.value())
@@ -217,7 +217,7 @@ TEST(FilePathTest, BaseName) {
 #endif  // FILE_PATH_USES_WIN_SEPARATORS
   };
 
-  for (size_t i = 0; i < base::size(cases); ++i) {
+  for (size_t i = 0; i < size(cases); ++i) {
     FilePath input(cases[i].input);
     FilePath observed = input.BaseName();
     EXPECT_EQ(std::string(cases[i].expected), observed.value())
@@ -295,7 +295,7 @@ TEST(FilePathTest, Append) {
 #endif  // FILE_PATH_USES_WIN_SEPARATORS
   };
 
-  for (size_t i = 0; i < base::size(cases); ++i) {
+  for (size_t i = 0; i < size(cases); ++i) {
     FilePath root(cases[i].inputs[0]);
     std::string leaf(cases[i].inputs[1]);
     FilePath observed_str = root.Append(leaf);
@@ -366,7 +366,7 @@ TEST(FilePathTest, StripTrailingSeparators) {
 #endif  // FILE_PATH_USES_WIN_SEPARATORS
   };
 
-  for (size_t i = 0; i < base::size(cases); ++i) {
+  for (size_t i = 0; i < size(cases); ++i) {
     FilePath input(cases[i].input);
     FilePath observed = input.StripTrailingSeparators();
     EXPECT_EQ(std::string(cases[i].expected), observed.value())
@@ -434,10 +434,63 @@ TEST(FilePathTest, IsAbsolute) {
 #endif  // FILE_PATH_USES_WIN_SEPARATORS
   };
 
-  for (size_t i = 0; i < base::size(cases); ++i) {
+  for (size_t i = 0; i < size(cases); ++i) {
     FilePath input(cases[i].input);
     bool observed = input.IsAbsolute();
     EXPECT_EQ(cases[i].expected, observed)
+        << "i: " << i << ", input: " << input.value();
+  }
+}
+
+TEST(FilePathTest, PathComponentsTest) {
+  const struct UnaryTestData cases[] = {
+    {"//foo/bar/baz/", "|//|foo|bar|baz"},
+    {"///", "|/"},
+    {"/foo//bar//baz/", "|/|foo|bar|baz"},
+    {"/foo/bar/baz/", "|/|foo|bar|baz"},
+    {"/foo/bar/baz//", "|/|foo|bar|baz"},
+    {"/foo/bar/baz///", "|/|foo|bar|baz"},
+    {"/foo/bar/baz", "|/|foo|bar|baz"},
+    {"/foo/bar.bot/baz.txt", "|/|foo|bar.bot|baz.txt"},
+    {"//foo//bar/baz", "|//|foo|bar|baz"},
+    {"/", "|/"},
+    {"foo", "|foo"},
+    {"", ""},
+#if defined(FILE_PATH_USES_DRIVE_LETTERS)
+    {"e:/foo", "|e:|/|foo"},
+    {"e:/", "|e:|/"},
+    {"e:", "|e:"},
+#endif  // FILE_PATH_USES_DRIVE_LETTERS
+#if defined(FILE_PATH_USES_WIN_SEPARATORS)
+    {"../foo", "|..|foo"},
+    {"./foo", "|foo"},
+    {"../foo/bar/", "|..|foo|bar"},
+    {"\\\\foo\\bar\\baz\\", "|\\\\|foo|bar|baz"},
+    {"\\\\\\", "|\\"},
+    {"\\foo\\\\bar\\\\baz\\", "|\\|foo|bar|baz"},
+    {"\\foo\\bar\\baz\\", "|\\|foo|bar|baz"},
+    {"\\foo\\bar\\baz\\\\", "|\\|foo|bar|baz"},
+    {"\\foo\\bar\\baz\\\\\\", "|\\|foo|bar|baz"},
+    {"\\foo\\bar\\baz", "|\\|foo|bar|baz"},
+    {"\\foo\\bar/baz\\\\\\", "|\\|foo|bar|baz"},
+    {"/foo\\bar\\baz", "|/|foo|bar|baz"},
+    {"\\foo\\bar.bot\\baz.txt", "|\\|foo|bar.bot|baz.txt"},
+    {"\\\\foo\\\\bar\\baz", "|\\\\|foo|bar|baz"},
+    {"\\", "|\\"},
+#endif  // FILE_PATH_USES_WIN_SEPARATORS
+  };
+
+  for (size_t i = 0; i < size(cases); ++i) {
+    FilePath input(cases[i].input);
+    std::vector<std::string> comps;
+    input.GetComponents(&comps);
+
+    std::string observed;
+    for (const auto& j : comps) {
+      observed.append("|", 1);
+      observed.append(j);
+    }
+    EXPECT_EQ(std::string(cases[i].expected), observed)
         << "i: " << i << ", input: " << input.value();
   }
 }
@@ -483,7 +536,7 @@ TEST(FilePathTest, EqualityTest) {
 #endif  // FILE_PATH_USES_WIN_SEPARATORS
   };
 
-  for (size_t i = 0; i < base::size(cases); ++i) {
+  for (size_t i = 0; i < size(cases); ++i) {
     FilePath a(cases[i].inputs[0]);
     FilePath b(cases[i].inputs[1]);
 
@@ -491,7 +544,7 @@ TEST(FilePathTest, EqualityTest) {
         << "equality i: " << i << ", a: " << a.value() << ", b: " << b.value();
   }
 
-  for (size_t i = 0; i < base::size(cases); ++i) {
+  for (size_t i = 0; i < size(cases); ++i) {
     FilePath a(cases[i].inputs[0]);
     FilePath b(cases[i].inputs[1]);
 
@@ -536,7 +589,7 @@ TEST(FilePathTest, RemoveExtension) {
     {"/foo.bar/foo", "/foo.bar/foo"},
     {"/foo.bar/..////", "/foo.bar/..////"},
   };
-  for (unsigned int i = 0; i < base::size(cases); ++i) {
+  for (unsigned int i = 0; i < size(cases); ++i) {
     FilePath path(cases[i].input);
     FilePath removed = path.RemoveExtension();
     EXPECT_EQ(cases[i].expected, removed.value())
@@ -579,7 +632,7 @@ TEST(FilePathTest, ReplaceExtension) {
     {{"/foo.bar/foo", "baz"}, "/foo.bar/foo.baz"},
     {{"/foo.bar/..////", "baz"}, ""},
   };
-  for (unsigned int i = 0; i < base::size(cases); ++i) {
+  for (unsigned int i = 0; i < size(cases); ++i) {
     FilePath path(cases[i].inputs[0]);
     FilePath replaced = path.ReplaceExtension(cases[i].inputs[1]);
     EXPECT_EQ(cases[i].expected, replaced.value())
@@ -618,7 +671,7 @@ TEST(FilePathTest, AddExtension) {
     {{"/foo.bar/foo", "baz"}, "/foo.bar/foo.baz"},
     {{"/foo.bar/..////", "baz"}, ""},
   };
-  for (unsigned int i = 0; i < base::size(cases); ++i) {
+  for (unsigned int i = 0; i < size(cases); ++i) {
     FilePath path(cases[i].inputs[0]);
     FilePath added = path.AddExtension(cases[i].inputs[1]);
     EXPECT_EQ(cases[i].expected, added.value())

@@ -75,6 +75,14 @@ bool IsPathAbsolute(absl::string_view path) {
 #endif  // FILE_PATH_USES_DRIVE_LETTERS
 }
 
+bool AreAllSeparators(const std::string& input) {
+  for (auto it : input) {
+    if (!FilePath::IsSeparator(it)) return false;
+  }
+
+  return true;
+}
+
 // Find the position of the '.' that separates the extension from the rest
 // of the file name. The position is relative to BaseName(), not value().
 // Returns npos if it can't find an extension.
@@ -144,6 +152,38 @@ bool FilePath::IsSeparator(char character) {
   }
 
   return false;
+}
+
+void FilePath::GetComponents(std::vector<std::string>* components) const {
+  DCHECK(components);
+  if (!components) return;
+  components->clear();
+  if (value().empty()) return;
+
+  std::vector<std::string> ret_val;
+  FilePath current = *this;
+  FilePath base;
+
+  // Capture path components.
+  while (current != current.DirName()) {
+    base = current.BaseName();
+    if (!AreAllSeparators(base.value())) ret_val.push_back(base.value());
+    current = current.DirName();
+  }
+
+  // Capture root, if any.
+  base = current.BaseName();
+  if (!base.value().empty() && base.value() != kCurrentDirectory)
+    ret_val.push_back(current.BaseName().value());
+
+  // Capture drive letter, if any.
+  FilePath dir = current.DirName();
+  size_t letter = FindDriveLetter(dir.value());
+  if (letter != std::string::npos) {
+    ret_val.push_back(std::string(dir.value(), 0, letter + 1));
+  }
+
+  *components = std::vector<std::string>(ret_val.rbegin(), ret_val.rend());
 }
 
 // libgen's dirname and basename aren't guaranteed to be thread-safe and aren't
@@ -325,6 +365,31 @@ FilePath FilePath::StripTrailingSeparators() const {
   new_path.StripTrailingSeparatorsInternal();
 
   return new_path;
+}
+
+bool FilePath::ReferencesParent() const {
+  if (path_.find(kParentDirectory) == std::string::npos) {
+    // GetComponents is quite expensive, so avoid calling it in the majority
+    // of cases where there isn't a kParentDirectory anywhere in the path.
+    return false;
+  }
+
+  std::vector<std::string> components;
+  GetComponents(&components);
+
+  std::vector<std::string>::const_iterator it = components.begin();
+  for (; it != components.end(); ++it) {
+    const std::string& component = *it;
+    // Windows has odd, undocumented behavior with path components containing
+    // only whitespace and . characters. So, if all we see is . and
+    // whitespace, then we treat any .. sequence as referencing parent.
+    // For simplicity we enforce this on all platforms.
+    if (component.find_first_not_of(". \n\r\t") == std::string::npos &&
+        component.find(kParentDirectory) != std::string::npos) {
+      return true;
+    }
+  }
+  return false;
 }
 
 void FilePath::StripTrailingSeparatorsInternal() {

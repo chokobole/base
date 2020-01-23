@@ -2,6 +2,26 @@ load("//bazel:base_cc.bzl", "base_cc_library", "base_cc_test")
 load("@com_chokobole_bazel_utils//:conditions.bzl", "if_android", "if_windows")
 
 base_cc_library(
+    name = "file",
+    srcs = ["file.cc"] + if_windows(
+        [
+            "file_win.cc",
+        ],
+        [
+            "file_posix.cc",
+        ],
+    ),
+    hdrs = ["file.h"],
+    deps = [
+        ":file_path",
+        ":platform_file",
+        "//base/numerics:safe_conversions",
+        "//base/time:time_util",
+        "@com_google_absl//absl/types:span",
+    ],
+)
+
+base_cc_library(
     name = "file_path",
     srcs = [
         "file_path.cc",

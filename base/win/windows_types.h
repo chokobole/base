@@ -207,6 +207,7 @@ WINBASEAPI VOID WINAPI SetLastError(_In_ DWORD dwErrCode);
 // ensures that the same renaming will happen everywhere. Includes of this file
 // can be added wherever needed to ensure this consistent renaming.
 
+#if defined(UNICODE) || defined(_UNICODE)
 #define CopyFile CopyFileW
 #define CreateDirectory CreateDirectoryW
 #define CreateEvent CreateEventW
@@ -223,5 +224,23 @@ WINBASEAPI VOID WINAPI SetLastError(_In_ DWORD dwErrCode);
 #define RemoveDirectory RemoveDirectoryW
 #define SetCurrentDirectory SetCurrentDirectoryW
 #define StartService StartServiceW
+#else
+#define CopyFile CopyFileA
+#define CreateDirectory CreateDirectoryA
+#define CreateEvent CreateEventA
+#define CreateFile CreateFileA
+#define CreateService CreateServiceA
+#define DeleteFile DeleteFileA
+#define FindFirstFile FindFirstFileA
+#define FindNextFile FindNextFileA
+#define GetComputerName GetComputerNameA
+#define GetCurrentDirectory GetCurrentDirectoryA
+#define GetCurrentTime() GetTickCount()
+#define GetFileAttributes GetFileAttributesA
+#define GetUserName GetUserNameA
+#define RemoveDirectory RemoveDirectoryA
+#define SetCurrentDirectory SetCurrentDirectoryA
+#define StartService StartServiceA
+#endif
 
 #endif  // BASE_WIN_WINDOWS_TYPES_H

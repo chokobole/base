@@ -10,6 +10,7 @@
 #define BASE_FILES_FILE_PATH_H_
 
 #include <string>
+#include <vector>
 
 #include "absl/strings/string_view.h"
 #include "base/build_config.h"
@@ -92,6 +93,18 @@ class BASE_EXPORT FilePath {
   // Returns true if |character| is in kSeparators.
   static bool IsSeparator(char character);
 
+  // Returns a vector of all of the components of the provided path. It is
+  // equivalent to calling DirName().value() on the path's root component,
+  // and BaseName().value() on each child component.
+  //
+  // To make sure this is lossless so we can differentiate absolute and
+  // relative paths, the root slash will be included even though no other
+  // slashes will be. The precise behavior is:
+  //
+  // Posix:  "/foo/bar"  ->  [ "/", "foo", "bar" ]
+  // Windows:  "C:\foo\bar"  ->  [ "C:", "\\", "foo", "bar" ]
+  void GetComponents(std::vector<std::string>* components) const;
+
   // Returns a FilePath corresponding to the directory containing the path
   // named by this object, stripping away the file component.  If this object
   // only contains one component, returns a FilePath identifying
@@ -157,6 +170,10 @@ class BASE_EXPORT FilePath {
   // Returns a copy of this FilePath that does not end with a trailing
   // separator.
   FilePath StripTrailingSeparators() const WARN_UNUSED_RESULT;
+
+  // Returns true if this FilePath contains an attempt to reference a parent
+  // directory (e.g. has a path component that is "..").
+  bool ReferencesParent() const;
 
   // Normalize all path separators to backslash on Windows
   // (if FILE_PATH_USES_WIN_SEPARATORS is true), or do nothing on POSIX systems.

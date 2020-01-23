@@ -42,6 +42,7 @@ base/callback_forward.h:
 base/io_buffer.cc:
 base/stl_util.h:
 base/template_util.h:
+base/files/file.cc:
 base/socket/datagram_client_socket.h:
 base/socket/datagram_server_socket.h:
 base/socket/datagram_socket.h:
@@ -72,12 +73,15 @@ base/sys_byteorder.h:
 base/containers/stack_container.h:
 base/event_loop/event_loop.cc:
 base/event_loop/event_loop.h:
+base/files/file.h:
 base/files/file_path.cc:
 base/files/file_path.h:
 base/files/file_path_unittest.cc:
+base/files/file_posix.cc:
 base/files/file_util.h:
 base/files/file_util_posix.cc:
 base/files/file_util_win.cc:
+base/files/file_win.cc:
 base/posix/eint_wrapper.h:
 base/socket/address_list.cc:
 base/socket/address_list.h:
