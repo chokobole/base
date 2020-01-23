@@ -95,7 +95,7 @@ absl::Duration GetTransportRtt(SocketDescriptor fd) {
 
   socklen_t info_len = sizeof(tcp_info);
   if (getsockopt(fd, IPPROTO_TCP, TCP_INFO, &info, &info_len) != 0)
-    return absl::Duration();
+    return absl::ZeroDuration();
 
   // Verify that |tcpi_rtt| in tcp_info struct was updated. Note that it's
   // possible that |info_len| is shorter than |sizeof(tcp_info)| which implies
@@ -103,7 +103,7 @@ absl::Duration GetTransportRtt(SocketDescriptor fd) {
   // getsockopt().
   if (info_len < static_cast<socklen_t>(offsetof(tcp_info, tcpi_rtt) +
                                         sizeof(info.tcpi_rtt))) {
-    return absl::Duration();
+    return absl::ZeroDuration();
   }
 
   return absl::Microseconds(std::max(info.tcpi_rtt, kMinValidRttMicros));
@@ -367,7 +367,7 @@ bool TCPSocketPosix::GetEstimatedRoundTripTime(absl::Duration* out_rtt) const {
 
 #if defined(HAVE_TCP_INFO)
   absl::Duration rtt = GetTransportRtt(socket_->socket_fd());
-  if (rtt == absl::Duration()) return false;
+  if (rtt == absl::ZeroDuration()) return false;
   *out_rtt = rtt;
   return true;
 #endif  // defined(TCP_INFO)
