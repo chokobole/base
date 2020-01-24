@@ -22,6 +22,23 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "file_enumerator",
+    srcs = ["file_enumerator.cc"] + if_windows(
+        [
+            "file_enumerator_win.cc",
+        ],
+        [
+            "file_enumerator_posix.cc",
+        ],
+    ),
+    hdrs = ["file_enumerator.h"],
+    deps = [
+        ":file",
+        "//base/strings"
+    ],
+)
+
+base_cc_library(
     name = "file_path",
     srcs = [
         "file_path.cc",

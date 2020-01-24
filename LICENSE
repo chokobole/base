@@ -74,6 +74,7 @@ base/containers/stack_container.h:
 base/event_loop/event_loop.cc:
 base/event_loop/event_loop.h:
 base/files/file.h:
+base/files/file_enumerator.h:
 base/files/file_path.cc:
 base/files/file_path.h:
 base/files/file_path_unittest.cc:
@@ -112,6 +113,9 @@ base/socket/tcp_socket_posix.h:
 base/socket/tcp_server_socket.cc:
   Copyright 2013 The Chromium Authors.
 
+base/files/file_enumerator.cc:
+base/files/file_enumerator_posix.cc:
+base/files/file_enumerator_win.cc:
 base/socket/tcp_client_socket.cc:
   Copyright (c) 2013 The Chromium Authors.
 
