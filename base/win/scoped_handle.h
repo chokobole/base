@@ -10,6 +10,7 @@
 #define BASE_WIN_SCOPED_HANDLE_H_
 
 #include "base/compiler_specific.h"
+#include "base/export.h"
 #include "base/logging.h"
 #include "base/win/windows_types.h"
 
@@ -98,10 +99,7 @@ class HandleTraits {
   HandleTraits& operator=(const HandleTraits& other) = delete;
 
   // Closes the handle.
-  static bool CloseHandle(HANDLE handle) {
-    if (!::CloseHandle(handle)) CHECK(false);  // CloseHandle failed.
-    return true;
-  }
+  BASE_EXPORT static bool CloseHandle(HANDLE handle);
 
   // Returns true if the handle value is valid.
   static bool IsHandleValid(HANDLE handle) {
