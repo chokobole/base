@@ -10,15 +10,22 @@
 
 namespace base {
 
-BASE_EXPORT bool StartsWith(absl::string_view text, absl::string_view expected);
+enum class CompareCase {
+  SENSITIVE_ASCII,
+  INSENSITIVE_ASCII,
+};
 
-BASE_EXPORT bool EndsWith(absl::string_view text, absl::string_view expected);
+BASE_EXPORT bool StartsWith(absl::string_view text, absl::string_view expected, CompareCase compare_case = CompareCase::SENSITIVE_ASCII);
+
+BASE_EXPORT bool EndsWith(absl::string_view text, absl::string_view expected, CompareCase compare_case = CompareCase::SENSITIVE_ASCII);
 
 BASE_EXPORT bool ConsumePrefix(absl::string_view* text,
-                               absl::string_view expected);
+                               absl::string_view expected,
+                               CompareCase compare_case = CompareCase::SENSITIVE_ASCII);
 
 BASE_EXPORT bool ConsumeSuffix(absl::string_view* text,
-                               absl::string_view expected);
+                               absl::string_view expected,
+                               CompareCase compare_case = CompareCase::SENSITIVE_ASCII);
 
 BASE_EXPORT bool ConsumeASCIIWhitespace(absl::string_view* text,
                                         absl::string_view expected);

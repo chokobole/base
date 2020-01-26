@@ -495,6 +495,140 @@ TEST(FilePathTest, PathComponentsTest) {
   }
 }
 
+TEST(FilePathTest, IsParentTest) {
+  const struct BinaryBooleanTestData cases[] = {
+    {{"/", "/foo/bar/baz"}, true},
+    {{"/foo", "/foo/bar/baz"}, true},
+    {{"/foo/bar", "/foo/bar/baz"}, true},
+    {{"/foo/bar/", "/foo/bar/baz"}, true},
+    {{"//foo/bar/", "//foo/bar/baz"}, true},
+    {{"/foo/bar", "/foo2/bar/baz"}, false},
+    {{"/foo/bar.txt", "/foo/bar/baz"}, false},
+    {{"/foo/bar", "/foo/bar2/baz"}, false},
+    {{"/foo/bar", "/foo/bar"}, false},
+    {{"/foo/bar/baz", "/foo/bar"}, false},
+    {{"foo", "foo/bar/baz"}, true},
+    {{"foo/bar", "foo/bar/baz"}, true},
+    {{"foo/bar", "foo2/bar/baz"}, false},
+    {{"foo/bar", "foo/bar2/baz"}, false},
+    {{"", "foo"}, false},
+#if defined(FILE_PATH_USES_DRIVE_LETTERS)
+    {{"c:/foo/bar", "c:/foo/bar/baz"}, true},
+    {{"E:/foo/bar", "e:/foo/bar/baz"}, true},
+    {{"f:/foo/bar", "F:/foo/bar/baz"}, true},
+    {{"E:/Foo/bar", "e:/foo/bar/baz"}, false},
+    {{"f:/foo/bar", "F:/foo/Bar/baz"}, false},
+    {{"c:/", "c:/foo/bar/baz"}, true},
+    {{"c:", "c:/foo/bar/baz"}, true},
+    {{"c:/foo/bar", "d:/foo/bar/baz"}, false},
+    {{"c:/foo/bar", "D:/foo/bar/baz"}, false},
+    {{"C:/foo/bar", "d:/foo/bar/baz"}, false},
+    {{"c:/foo/bar", "c:/foo2/bar/baz"}, false},
+    {{"e:/foo/bar", "E:/foo2/bar/baz"}, false},
+    {{"F:/foo/bar", "f:/foo2/bar/baz"}, false},
+    {{"c:/foo/bar", "c:/foo/bar2/baz"}, false},
+#endif  // FILE_PATH_USES_DRIVE_LETTERS
+#if defined(FILE_PATH_USES_WIN_SEPARATORS)
+    {{"\\foo\\bar", "\\foo\\bar\\baz"}, true},
+    {{"\\foo/bar", "\\foo\\bar\\baz"}, true},
+    {{"\\foo/bar", "\\foo/bar/baz"}, true},
+    {{"\\", "\\foo\\bar\\baz"}, true},
+    {{"", "\\foo\\bar\\baz"}, false},
+    {{"\\foo\\bar", "\\foo2\\bar\\baz"}, false},
+    {{"\\foo\\bar", "\\foo\\bar2\\baz"}, false},
+#endif  // FILE_PATH_USES_WIN_SEPARATORS
+  };
+
+  for (size_t i = 0; i < size(cases); ++i) {
+    FilePath parent(cases[i].inputs[0]);
+    FilePath child(cases[i].inputs[1]);
+
+    EXPECT_EQ(parent.IsParent(child), cases[i].expected)
+        << "i: " << i << ", parent: " << parent.value()
+        << ", child: " << child.value();
+  }
+}
+
+TEST(FilePathTest, AppendRelativePathTest) {
+  const struct BinaryTestData cases[] = {
+#if defined(FILE_PATH_USES_WIN_SEPARATORS)
+    {{"/", "/foo/bar/baz"}, "foo\\bar\\baz"},
+#else   // FILE_PATH_USES_WIN_SEPARATORS
+    {{"/", "/foo/bar/baz"}, "foo/bar/baz"},
+#endif  // FILE_PATH_USES_WIN_SEPARATORS
+    {{"/foo/bar", "/foo/bar/baz"}, "baz"},
+    {{"/foo/bar/", "/foo/bar/baz"}, "baz"},
+    {{"//foo/bar/", "//foo/bar/baz"}, "baz"},
+    {{"/foo/bar", "/foo2/bar/baz"}, ""},
+    {{"/foo/bar.txt", "/foo/bar/baz"}, ""},
+    {{"/foo/bar", "/foo/bar2/baz"}, ""},
+    {{"/foo/bar", "/foo/bar"}, ""},
+    {{"/foo/bar/baz", "/foo/bar"}, ""},
+    {{"foo/bar", "foo/bar/baz"}, "baz"},
+    {{"foo/bar", "foo2/bar/baz"}, ""},
+    {{"foo/bar", "foo/bar2/baz"}, ""},
+    {{"", "foo"}, ""},
+#if defined(FILE_PATH_USES_DRIVE_LETTERS)
+    {{"c:/foo/bar", "c:/foo/bar/baz"}, "baz"},
+    {{"E:/foo/bar", "e:/foo/bar/baz"}, "baz"},
+    {{"f:/foo/bar", "F:/foo/bar/baz"}, "baz"},
+    {{"E:/Foo/bar", "e:/foo/bar/baz"}, ""},
+    {{"f:/foo/bar", "F:/foo/Bar/baz"}, ""},
+#if defined(FILE_PATH_USES_WIN_SEPARATORS)
+    {{"c:/", "c:/foo/bar/baz"}, "foo\\bar\\baz"},
+  // TODO(akalin): Figure out how to handle the corner case in the
+  // commented-out test case below.  Appending to an empty path gives
+  // /foo\bar\baz but appending to a nonempty path "blah" gives
+  // blah\foo\bar\baz.
+  // { { "c:",            "c:/foo/bar/baz" }, "foo\\bar\\baz"},
+#endif  // FILE_PATH_USES_WIN_SEPARATORS
+    {{"c:/foo/bar", "d:/foo/bar/baz"}, ""},
+    {{"c:/foo/bar", "D:/foo/bar/baz"}, ""},
+    {{"C:/foo/bar", "d:/foo/bar/baz"}, ""},
+    {{"c:/foo/bar", "c:/foo2/bar/baz"}, ""},
+    {{"e:/foo/bar", "E:/foo2/bar/baz"}, ""},
+    {{"F:/foo/bar", "f:/foo2/bar/baz"}, ""},
+    {{"c:/foo/bar", "c:/foo/bar2/baz"}, ""},
+#endif  // FILE_PATH_USES_DRIVE_LETTERS
+#if defined(FILE_PATH_USES_WIN_SEPARATORS)
+    {{"\\foo\\bar", "\\foo\\bar\\baz"}, "baz"},
+    {{"\\foo/bar", "\\foo\\bar\\baz"}, "baz"},
+    {{"\\foo/bar", "\\foo/bar/baz"}, "baz"},
+    {{"\\", "\\foo\\bar\\baz"}, "foo\\bar\\baz"},
+    {{"", "\\foo\\bar\\baz"}, ""},
+    {{"\\foo\\bar", "\\foo2\\bar\\baz"}, ""},
+    {{"\\foo\\bar", "\\foo\\bar2\\baz"}, ""},
+#endif  // FILE_PATH_USES_WIN_SEPARATORS
+  };
+
+  const FilePath base("blah");
+
+  for (size_t i = 0; i < size(cases); ++i) {
+    FilePath parent(cases[i].inputs[0]);
+    FilePath child(cases[i].inputs[1]);
+    {
+      FilePath result;
+      bool success = parent.AppendRelativePath(child, &result);
+      EXPECT_EQ(!cases[i].expected.empty(), success)
+          << "i: " << i << ", parent: " << parent.value()
+          << ", child: " << child.value();
+      EXPECT_EQ(cases[i].expected, result.value())
+          << "i: " << i << ", parent: " << parent.value()
+          << ", child: " << child.value();
+    }
+    {
+      FilePath result(base);
+      bool success = parent.AppendRelativePath(child, &result);
+      EXPECT_EQ(!cases[i].expected.empty(), success)
+          << "i: " << i << ", parent: " << parent.value()
+          << ", child: " << child.value();
+      EXPECT_EQ(base.Append(cases[i].expected).value(), result.value())
+          << "i: " << i << ", parent: " << parent.value()
+          << ", child: " << child.value();
+    }
+  }
+}
+
 TEST(FilePathTest, EqualityTest) {
   const struct BinaryBooleanTestData cases[] = {
     {{"/foo/bar/baz", "/foo/bar/baz"}, true},

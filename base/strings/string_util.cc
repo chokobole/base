@@ -9,31 +9,54 @@
 
 namespace base {
 
-bool StartsWith(absl::string_view text, absl::string_view expected) {
+namespace {
+struct CaseInsensitiveCompareASCII {
+ public:
+  bool operator()(char x, char y) const {
+    return absl::ascii_toupper(x) == absl::ascii_toupper(y);
+  }
+};
+}
+
+bool StartsWith(absl::string_view text, absl::string_view expected ,CompareCase compare_case) {
   if (text.size() < expected.size()) return false;
 
   absl::string_view target = text.substr(0, expected.size());
-  return target == expected;
+  if (compare_case == CompareCase::SENSITIVE_ASCII) {
+    return target == expected;
+  } else {
+    return std::equal(
+          expected.begin(), expected.end(),
+          text.begin(),
+          CaseInsensitiveCompareASCII());
+  }
 }
 
-bool EndsWith(absl::string_view text, absl::string_view expected) {
+bool EndsWith(absl::string_view text, absl::string_view expected, CompareCase compare_case) {
   if (text.size() < expected.size()) return false;
 
   absl::string_view target =
       text.substr(text.size() - expected.size(), expected.size());
-  return target == expected;
+  if (compare_case == CompareCase::SENSITIVE_ASCII) {
+    return target == expected;
+  } else {
+    return std::equal(
+          expected.begin(), expected.end(),
+          text.begin(),
+          CaseInsensitiveCompareASCII());
+  }
 }
 
-bool ConsumePrefix(absl::string_view* text, absl::string_view expected) {
-  if (StartsWith(*text, expected)) {
+bool ConsumePrefix(absl::string_view* text, absl::string_view expected, CompareCase compare_case) {
+  if (StartsWith(*text, expected, compare_case)) {
     text->remove_prefix(expected.size());
     return true;
   }
   return false;
 }
 
-bool ConsumeSuffix(absl::string_view* text, absl::string_view expected) {
-  if (EndsWith(*text, expected)) {
+bool ConsumeSuffix(absl::string_view* text, absl::string_view expected, CompareCase compare_case) {
+  if (EndsWith(*text, expected, compare_case)) {
     text->remove_suffix(expected.size());
     return true;
   }

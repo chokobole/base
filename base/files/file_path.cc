@@ -14,6 +14,7 @@
 
 #include "absl/strings/ascii.h"
 #include "absl/strings/str_cat.h"
+#include "base/strings/string_util.h"
 #include "base/logging.h"
 
 namespace base {
@@ -49,7 +50,7 @@ bool EqualDriveLetterCaseInsensitive(absl::string_view a, absl::string_view b) {
 
   absl::string_view a_letter(a.substr(0, a_letter_pos + 1));
   absl::string_view b_letter(b.substr(0, b_letter_pos + 1));
-  if (absl::ascii_toupper(a_letter[0]) != absl::ascii_toupper(b_letter[0]))
+  if (!StartsWith(a_letter, b_letter, CompareCase::INSENSITIVE_ASCII))
     return false;
 
   absl::string_view a_rest(a.substr(a_letter_pos + 1));
@@ -184,6 +185,52 @@ void FilePath::GetComponents(std::vector<std::string>* components) const {
   }
 
   *components = std::vector<std::string>(ret_val.rbegin(), ret_val.rend());
+}
+
+bool FilePath::IsParent(const FilePath& child) const {
+  return AppendRelativePath(child, nullptr);
+}
+
+bool FilePath::AppendRelativePath(const FilePath& child, FilePath* path) const {
+  std::vector<std::string> parent_components;
+  std::vector<std::string> child_components;
+  GetComponents(&parent_components);
+  child.GetComponents(&child_components);
+
+  if (parent_components.empty() ||
+      parent_components.size() >= child_components.size())
+    return false;
+
+  std::vector<std::string>::const_iterator parent_comp =
+      parent_components.begin();
+  std::vector<std::string>::const_iterator child_comp =
+      child_components.begin();
+
+#if defined(FILE_PATH_USES_DRIVE_LETTERS)
+  // Windows can access case sensitive filesystems, so component
+  // comparisions must be case sensitive, but drive letters are
+  // never case sensitive.
+  if ((FindDriveLetter(*parent_comp) != std::string::npos) &&
+      (FindDriveLetter(*child_comp) != std::string::npos)) {
+    if (!StartsWith(*parent_comp, *child_comp, CompareCase::INSENSITIVE_ASCII))
+      return false;
+    ++parent_comp;
+    ++child_comp;
+  }
+#endif  // defined(FILE_PATH_USES_DRIVE_LETTERS)
+
+  while (parent_comp != parent_components.end()) {
+    if (*parent_comp != *child_comp) return false;
+    ++parent_comp;
+    ++child_comp;
+  }
+
+  if (path != nullptr) {
+    for (; child_comp != child_components.end(); ++child_comp) {
+      *path = path->Append(*child_comp);
+    }
+  }
+  return true;
 }
 
 // libgen's dirname and basename aren't guaranteed to be thread-safe and aren't
@@ -430,5 +477,11 @@ FilePath FilePath::NormalizePathSeparatorsTo(char separator) const {
   return *this;
 #endif
 }
+
+#if defined(OS_ANDROID)
+bool FilePath::IsContentUri() const {
+  return StartsWith(path_, "content://", base::CompareCase::INSENSITIVE_ASCII);
+}
+#endif
 
 }  // namespace base

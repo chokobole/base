@@ -52,7 +52,7 @@ base_cc_library(
         "//base:export",
         "//base:logging",
         "//base:stl_util",
-        "@com_google_absl//absl/strings",
+        "//base/strings",
     ],
 )
 

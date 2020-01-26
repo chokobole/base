@@ -105,6 +105,24 @@ class BASE_EXPORT FilePath {
   // Windows:  "C:\foo\bar"  ->  [ "C:", "\\", "foo", "bar" ]
   void GetComponents(std::vector<std::string>* components) const;
 
+  // Returns true if this FilePath is a parent or ancestor of the |child|.
+  // Absolute and relative paths are accepted i.e. /foo is a parent to /foo/bar,
+  // and foo is a parent to foo/bar. Any ancestor is considered a parent i.e. /a
+  // is a parent to both /a/b and /a/b/c.  Does not convert paths to absolute,
+  // follow symlinks or directory navigation (e.g. ".."). A path is *NOT* its
+  // own parent.
+  bool IsParent(const FilePath& child) const;
+
+  // If IsParent(child) holds, appends to path (if non-NULL) the
+  // relative path to child and returns true.  For example, if parent
+  // holds "/Users/johndoe/Library/Application Support", child holds
+  // "/Users/johndoe/Library/Application Support/Google/Chrome/Default", and
+  // *path holds "/Users/johndoe/Library/Caches", then after
+  // parent.AppendRelativePath(child, path) is called *path will hold
+  // "/Users/johndoe/Library/Caches/Google/Chrome/Default".  Otherwise,
+  // returns false.
+  bool AppendRelativePath(const FilePath& child, FilePath* path) const;
+
   // Returns a FilePath corresponding to the directory containing the path
   // named by this object, stripping away the file component.  If this object
   // only contains one component, returns a FilePath identifying
@@ -182,6 +200,15 @@ class BASE_EXPORT FilePath {
   // Normalize all path separattors to given type on Windows
   // (if FILE_PATH_USES_WIN_SEPARATORS is true), or do nothing on POSIX systems.
   FilePath NormalizePathSeparatorsTo(char separator) const;
+
+#if defined(OS_ANDROID)
+  // On android, file selection dialog can return a file with content uri
+  // scheme(starting with content://). Content uri needs to be opened with
+  // ContentResolver to guarantee that the app has appropriate permissions
+  // to access it.
+  // Returns true if the path is a content uri, or false otherwise.
+  bool IsContentUri() const;
+#endif
 
  private:
   // Remove trailing separators from this object.  If the path is absolute, it
