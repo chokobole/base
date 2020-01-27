@@ -10,7 +10,7 @@ matrix:
       install:
         - ./installers/install_bazel.sh
       script:
-        - bazel test //...
+        - bazel test --build_tag_filters -objc //...
       after_failure:
         - find bazel-out/ -name "test.log" | xargs cat
     - os: osx
@@ -28,7 +28,7 @@ matrix:
       install:
         - choco install bazel --version 1.2.0
       script:
-        - bazel test ///...
+        - bazel test --build_tag_filters -objc ///...
       after_failure:
         - find bazel-out/ -name "test.log" | xargs cat
 

@@ -56,7 +56,7 @@ absl::Time FileEnumerator::FileInfo::GetLastModifiedTime() const {
 
 FileEnumerator::FileEnumerator(const FilePath& root_path, bool recursive,
                                int file_type)
-    : FileEnumerator(root_path, recursive, file_type, base::EmptyString(),
+    : FileEnumerator(root_path, recursive, file_type, EmptyString(),
                      FolderSearchPolicy::MATCH_ONLY) {}
 
 FileEnumerator::FileEnumerator(const FilePath& root_path, bool recursive,

@@ -1,5 +1,5 @@
-load("//bazel:base_cc.bzl", "base_cc_library", "base_cc_test")
-load("@com_chokobole_bazel_utils//:conditions.bzl", "if_android", "if_windows")
+load("//bazel:base_cc.bzl", "base_cc_library", "base_cc_test", "base_objc_library")
+load("@com_chokobole_bazel_utils//:conditions.bzl", "if_android", "if_mac", "if_windows")
 
 base_cc_library(
     name = "file",
@@ -34,7 +34,7 @@ base_cc_library(
     hdrs = ["file_enumerator.h"],
     deps = [
         ":file",
-        "//base/strings"
+        "//base/strings",
     ],
 )
 
@@ -56,6 +56,10 @@ base_cc_library(
     ],
 )
 
+FILE_UTIL_HDRS = [
+    "file_util.h",
+]
+
 base_cc_library(
     name = "file_util",
     srcs = if_windows(
@@ -66,12 +70,24 @@ base_cc_library(
             "file_util_posix.cc",
         ],
     ),
-    hdrs = ["file_util.h"],
+    hdrs = FILE_UTIL_HDRS,
     visibility = ["//visibility:public"],
     deps = [
-        "//base:export",
+        ":file",
+        ":file_enumerator",
         "//base/posix:eintr_wrapper",
-    ],
+        "//base/time:time_util",
+    ] + if_mac([
+        ":file_util_mac",
+    ]),
+)
+
+base_objc_library(
+    name = "file_util_mac",
+    srcs = if_mac(["file_util_mac.mm"]),
+    tags = ["objc"],
+    hdrs = FILE_UTIL_HDRS,
+    deps = [":file"],
 )
 
 base_cc_library(
