@@ -6,8 +6,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef BASE_FREE_DELETER_H_
-#define BASE_FREE_DELETER_H_
+#ifndef BASE_MEMORY_FREE_DELETER_H_
+#define BASE_MEMORY_FREE_DELETER_H_
 
 #include <stdlib.h>
 
@@ -24,4 +24,4 @@ struct FreeDeleter {
 
 }  // namespace base
 
-#endif  // BASE_FREE_DELETER_H_
+#endif  // BASE_MEMORY_FREE_DELETER_H_

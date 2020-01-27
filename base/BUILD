@@ -54,12 +54,6 @@ base_cc_library(
 )
 
 base_cc_library(
-    name = "free_deleter",
-    hdrs = ["free_deleter.h"],
-    visibility = ["//visibility:public"],
-)
-
-base_cc_library(
     name = "logging",
     hdrs = ["logging.h"],
     visibility = ["//visibility:public"],
@@ -73,8 +67,8 @@ base_cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":export",
-        ":free_deleter",
         ":logging",
+        "//base/memory:free_deleter",
     ],
 )
 

@@ -148,8 +148,8 @@ base/socket/address_family.cc:
 base/socket/diff_serv_code_point.h:
   Copyright 2015 The Chromium Authors.
 
-base/free_deleter.h:
 base/sys_byteorder_unittest.cc:
+base/memory/free_deleter.h:
   Copyright (c) 2016 The Chromium Authors.
 
 base/sockaddr_storage.cc:
