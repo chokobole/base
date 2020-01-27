@@ -8,26 +8,27 @@
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #include "glog/logging.h"
 
+// Helper macro which avoids evaluating the arguments to a stream if
+// the condition doesn't hold. Condition is evaluated once and only once.
+#define LAZY_STREAM(stream, condition) \
+  !(condition) ? (void)0 : ::google::LogMessageVoidify() & (stream)
+
 #define NOTREACHED() CHECK(false)
 
 #define VPLOG(verboselevel) PLOG_IF(INFO, VLOG_IS_ON(verboselevel))
 
-#if DCHECK_IS_ON()
+#define DPLOG(severity) LAZY_STREAM(PLOG(severity), DCHECK_IS_ON())
 
-#define DPLOG(severity) PLOG(severity)
+#if DCHECK_IS_ON()
 
 #define DVPLOG(verboselevel) VPLOG(verboselevel)
 
 #else  // !DCHECK_IS_ON()
 
-#define DPLOG(severity) \
-  static_cast<void>(0), \
-      true ? (void)0 : google::LogMessageVoidify() & PLOG(severity)
-
 #define DVPLOG(verboselevel)                                \
   static_cast<void>(0), (true || !VLOG_IS_ON(verboselevel)) \
                             ? (void)0                       \
-                            : google::LogMessageVoidify() & VPLOG(INFO)
+                            : google::LogMessageVoidify() & LOG(INFO)
 
 #endif
 

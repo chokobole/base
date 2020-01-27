@@ -31,6 +31,9 @@ them under the BSD-3-Clause license above.  The copyright notices are
 available in the corresponding source files; the license is as above.  Here's
 a list:
 
+base/file_descriptor_posix.h:
+  Copyright (c) 2006-2009 The Chromium Authors.
+
 base/socket/sys_addrinfo.h:
   Copyright (c) 2009 The Chromium Authors.
 
@@ -85,6 +88,8 @@ base/files/file_util_mac.mm:
 base/files/file_util_posix.cc:
 base/files/file_util_win.cc:
 base/files/file_win.cc:
+base/mac/scoped_mach_port.cc:
+base/mac/scoped_mach_port.h:
 base/posix/eint_wrapper.h:
 base/socket/address_list.cc:
 base/socket/address_list.h:
@@ -126,6 +131,8 @@ base/scoped_generic.h:
 base/scoped_generic_unittest.cc:
 base/files/scoped_file.cc:
 base/files/scoped_file.h:
+base/mac/mach_logging.cc:
+base/mac/mach_logging.h:
 base/numerics/safe_conversions.h:
 base/numerics/safe_conversions_arm_impl.h:
 base/numerics/safe_conversions_impl.h:
