@@ -1,6 +1,16 @@
 load("//bazel:base_cc.bzl", "base_cc_library")
 
 base_cc_library(
+    name = "checked_math",
+    hdrs = [
+        "checked_math.h",
+        "checked_math_impl.h",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [":safe_math_impl"],
+)
+
+base_cc_library(
     name = "safe_conversions",
     hdrs = [
         "safe_conversions.h",

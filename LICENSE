@@ -170,6 +170,8 @@ baes/containers/flat_map.h:
 baes/containers/flat_set.h:
 baes/containers/flat_tree.h:
 base/files/platform_file.h:
+base/numerics/checked_math.h:
+base/numerics/checked_math_impl.h:
 base/numerics/safe_math_arm_impl.h:
 base/numerics/safe_math_clang_gcc_impl.h:
 base/numerics/safe_math_shared_impl.h:
