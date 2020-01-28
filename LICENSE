@@ -133,6 +133,8 @@ base/files/scoped_file.cc:
 base/files/scoped_file.h:
 base/mac/mach_logging.cc:
 base/mac/mach_logging.h:
+base/mac/scoped_mach_vm.cc:
+base/mac/scoped_mach_vm.h:
 base/numerics/safe_conversions.h:
 base/numerics/safe_conversions_arm_impl.h:
 base/numerics/safe_conversions_impl.h:
@@ -185,4 +187,5 @@ base/socket/datagram_buffer.h:
   Copyright (c) 2018 The Chromium Authors.
 
 base/auto_reset_unittest.cc:
+base/mac/scoped_mach_vm_unittest.cc:
   Copyright 2019 The Chromium Authors.
