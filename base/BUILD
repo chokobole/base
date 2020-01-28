@@ -54,6 +54,13 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "file_descriptor_posix",
+    hdrs = ["file_descriptor_posix.h"],
+    visibility = ["//visibility:public"],
+    deps = ["//base/files:file"],
+)
+
+base_cc_library(
     name = "logging",
     hdrs = ["logging.h"],
     visibility = ["//visibility:public"],

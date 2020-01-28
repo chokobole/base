@@ -12,6 +12,7 @@ base_cc_library(
         ],
     ),
     hdrs = ["file.h"],
+    visibility = ["//visibility:public"],
     deps = [
         ":file_path",
         ":platform_file",
@@ -32,6 +33,7 @@ base_cc_library(
         ],
     ),
     hdrs = ["file_enumerator.h"],
+    visibility = ["//visibility:public"],
     deps = [
         ":file",
         "//base/strings",
