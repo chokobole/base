@@ -163,6 +163,8 @@ base/sys_byteorder_unittest.cc:
 base/memory/free_deleter.h:
   Copyright (c) 2016 The Chromium Authors.
 
+base/unguessable_token.cc:
+base/unguessable_token.h:
 base/sockaddr_storage.cc:
 base/sockaddr_storage.h:
 base/socket/socket_options.cc:
@@ -183,6 +185,8 @@ base/socket/socket_options.h:
 
 base/completion_once_callback.h:
 base/no_destructor.h:
+base/token.cc:
+base/token.h:
 base/files/scoped_file_android.cc:
 base/socket/datagram_buffer.cc:
 base/socket/datagram_buffer_unittest.cc:

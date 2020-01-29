@@ -151,6 +151,32 @@ base_cc_library(
     ],
 )
 
+base_cc_library(
+    name = "token",
+    srcs = ["token.cc"],
+    hdrs = ["token.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":export",
+        "@com_google_absl//absl/hash",
+        "@com_google_absl//absl/random",
+        "@com_google_absl//absl/strings:str_format",
+        "@com_google_absl//absl/types:optional",
+    ],
+)
+
+base_cc_library(
+    name = "unguessable_token",
+    srcs = ["unguessable_token.cc"],
+    hdrs = ["unguessable_token.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":logging",
+        ":no_destructor",
+        ":token",
+    ],
+)
+
 base_cc_test(
     name = "base_unittests",
     srcs = [
