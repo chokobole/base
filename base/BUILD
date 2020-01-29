@@ -7,6 +7,12 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "bits",
+    hdrs = ["bits.h"],
+    visibility = ["//visibility:public"],
+)
+
+base_cc_library(
     name = "build_config",
     hdrs = ["build_config.h"],
     visibility = ["//visibility:public"],
@@ -149,12 +155,14 @@ base_cc_test(
     name = "base_unittests",
     srcs = [
         "auto_reset_unittest.cc",
+        "bits_unittest.cc",
         "data_view_unittest.cc",
         "scoped_generic_unittest.cc",
         "sys_byteorder_unittest.cc",
     ],
     deps = [
         ":auto_reset",
+        ":bits",
         ":data_view",
         ":scoped_generic",
         ":stl_util",

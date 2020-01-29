@@ -35,6 +35,7 @@ base/file_descriptor_posix.h:
   Copyright (c) 2006-2009 The Chromium Authors.
 
 base/socket/sys_addrinfo.h:
+base/bits_unittest.cc:
   Copyright (c) 2009 The Chromium Authors.
 
 base/socket/address_family.h:
@@ -120,6 +121,7 @@ base/socket/tcp_socket_posix.h:
 base/socket/tcp_server_socket.cc:
   Copyright 2013 The Chromium Authors.
 
+base/bits.h:
 base/files/file_enumerator.cc:
 base/files/file_enumerator_posix.cc:
 base/files/file_enumerator_win.cc:
