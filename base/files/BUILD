@@ -87,8 +87,8 @@ base_cc_library(
 base_objc_library(
     name = "file_util_mac",
     srcs = if_mac(["file_util_mac.mm"]),
-    tags = ["objc"],
     hdrs = FILE_UTIL_HDRS,
+    tags = ["objc"],
     deps = [":file"],
 )
 

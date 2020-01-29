@@ -11,7 +11,7 @@ base_cc_library(
         "//base:export",
         "//base:logging",
         "@com_google_absl//absl/strings:str_format",
-    ]
+    ],
 )
 
 base_cc_library(
