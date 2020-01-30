@@ -1,5 +1,12 @@
 load("//bazel:base_cc.bzl", "base_cc_library", "base_cc_test")
 
+package_group(
+    name = "internal",
+    packages = [
+        "//base/...",
+    ],
+)
+
 base_cc_library(
     name = "auto_reset",
     hdrs = ["auto_reset.h"],

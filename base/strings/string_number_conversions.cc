@@ -22,6 +22,10 @@ bool StringToUint64(absl::string_view input, uint64_t* output) {
   return absl::SimpleAtoi(input, output);
 }
 
+bool StringToSizeT(absl::string_view input, size_t* output) {
+  return absl::SimpleAtoi(input, output);
+}
+
 bool StringToFloat(absl::string_view input, float* output) {
   return absl::SimpleAtof(input, output);
 }

@@ -4,15 +4,18 @@ base_cc_library(
     name = "strings",
     srcs = [
         "string_number_conversions.cc",
+        "string_split.cc",
         "string_util.cc",
     ],
     hdrs = [
         "string_number_conversions.h",
+        "string_split.h",
         "string_util.h",
     ],
     visibility = ["//visibility:public"],
     deps = [
         "//base:export",
+        "//base:logging",
         "//base:no_destructor",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/strings:str_format",

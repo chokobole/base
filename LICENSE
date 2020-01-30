@@ -47,6 +47,8 @@ base/io_buffer.cc:
 base/stl_util.h:
 base/template_util.h:
 base/files/file.cc:
+base/process/process_handle_freebsd.cc:
+base/process/process_handle_openbsd.cc:
 base/socket/datagram_client_socket.h:
 base/socket/datagram_server_socket.h:
 base/socket/datagram_socket.h:
@@ -92,6 +94,8 @@ base/files/file_win.cc:
 base/mac/scoped_mach_port.cc:
 base/mac/scoped_mach_port.h:
 base/posix/eint_wrapper.h:
+base/process/internal_aix.cc:
+base/process/internal_linux.cc:
 base/socket/address_list.cc:
 base/socket/address_list.h:
 base/socket/address_list_unittest.cc:
@@ -125,6 +129,13 @@ base/bits.h:
 base/files/file_enumerator.cc:
 base/files/file_enumerator_posix.cc:
 base/files/file_enumerator_win.cc:
+base/process/internal_aix.h:
+base/process/internal_linux.h:
+base/process/process_handle.h:
+base/process/process_handle_linux.cc:
+base/process/process_handle_mac.cc:
+base/process/process_handle_posix.cc:
+base/process/process_handle_win.cc:
 base/socket/tcp_client_socket.cc:
   Copyright (c) 2013 The Chromium Authors.
 
@@ -150,6 +161,7 @@ base/socket/unix_domain_server_socket_posix.h:
 base/win/windows_types.h:
   Copyright 2014 The Chromium Authors.
 
+base/process/process_handle.cc:
 base/socket/ip_address.cc:
 base/socket/ip_address.h:
 base/socket/ip_address_unittest.cc:
@@ -179,6 +191,7 @@ base/numerics/checked_math_impl.h:
 base/numerics/safe_math_arm_impl.h:
 base/numerics/safe_math_clang_gcc_impl.h:
 base/numerics/safe_math_shared_impl.h:
+base/process/process_handle_fuchsia.cc:
 base/socket/socket.cc:
 base/socket/socket_options.h:
   Copyright 2017 The Chromium Authors.

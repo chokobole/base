@@ -24,6 +24,7 @@ BASE_EXPORT bool StringToInt(absl::string_view input, int* output);
 BASE_EXPORT bool StringToUint(absl::string_view input, unsigned* output);
 BASE_EXPORT bool StringToInt64(absl::string_view input, int64_t* output);
 BASE_EXPORT bool StringToUint64(absl::string_view input, uint64_t* output);
+BASE_EXPORT bool StringToSizeT(absl::string_view input, size_t* output);
 BASE_EXPORT bool StringToFloat(absl::string_view input, float* output);
 BASE_EXPORT bool StringToDouble(absl::string_view input, double* output);
 
