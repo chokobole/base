@@ -8,13 +8,18 @@
 
 #include "base/files/file_util.h"
 
-#include <windows.h>
 #include <io.h>
+#include <shlobj.h>
 #include <string.h>
+#include <windows.h>
 #include <winsock2.h>
 
+#include "absl/random/random.h"
 #include "base/files/file_enumerator.h"
+#include "base/guid.h"
 #include "base/logging.h"
+#include "base/process/process_handle.h"
+#include "base/strings/string_number_conversions.h"
 #include "base/time/time_util.h"
 
 namespace base {
@@ -309,6 +314,186 @@ bool DirectoryExists(const FilePath& path) {
   DWORD fileattr = GetFileAttributes(path.value().c_str());
   if (fileattr != INVALID_FILE_ATTRIBUTES)
     return (fileattr & FILE_ATTRIBUTE_DIRECTORY) != 0;
+  return false;
+}
+
+bool GetTempDir(FilePath* path) {
+  char temp_path[MAX_PATH + 1];
+  DWORD path_len = ::GetTempPath(MAX_PATH, temp_path);
+  if (path_len >= MAX_PATH || path_len <= 0) return false;
+  // TODO(evanm): the old behavior of this function was to always strip the
+  // trailing slash.  We duplicate this here, but it shouldn't be necessary
+  // when everyone is using the appropriate FilePath APIs.
+  *path = FilePath(temp_path).StripTrailingSeparators();
+  return true;
+}
+
+FilePath GetHomeDir() {
+  char result[MAX_PATH];
+  if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, SHGFP_TYPE_CURRENT,
+                                result)) &&
+      result[0]) {
+    return FilePath(result);
+  }
+
+  // Fall back to the temporary directory on failure.
+  FilePath temp;
+  if (GetTempDir(&temp)) return temp;
+
+  // Last resort.
+  return FilePath("C:\\");
+}
+
+bool CreateTemporaryFile(FilePath* path) {
+  FilePath temp_file;
+
+  if (!GetTempDir(path)) return false;
+
+  if (CreateTemporaryFileInDir(*path, &temp_file)) {
+    *path = temp_file;
+    return true;
+  }
+
+  return false;
+}
+
+// On POSIX we have semantics to create and open a temporary file
+// atomically.
+// TODO(jrg): is there equivalent call to use on Windows instead of
+// going 2-step?
+FILE* CreateAndOpenTemporaryFileInDir(const FilePath& dir, FilePath* path) {
+  if (!CreateTemporaryFileInDir(dir, path)) {
+    return NULL;
+  }
+  // Open file in binary mode, to avoid problems with fwrite. On Windows
+  // it replaces \n's with \r\n's, which may surprise you.
+  // Reference: http://msdn.microsoft.com/en-us/library/h9t88zwz(VS.71).aspx
+  return OpenFile(*path, "wb+");
+}
+
+bool CreateTemporaryFileInDir(const FilePath& dir, FilePath* temp_file) {
+  // Use GUID instead of ::GetTempFileName() to generate unique file names.
+  // "Due to the algorithm used to generate file names, GetTempFileName can
+  // perform poorly when creating a large number of files with the same prefix.
+  // In such cases, it is recommended that you construct unique file names based
+  // on GUIDs."
+  // https://msdn.microsoft.com/library/windows/desktop/aa364991.aspx
+
+  FilePath temp_name;
+  bool create_file_success = false;
+
+  // Although it is nearly impossible to get a duplicate name with GUID, we
+  // still use a loop here in case it happens.
+  for (int i = 0; i < 100; ++i) {
+    temp_name = dir.Append(GenerateGUID() + ".tmp");
+    File file(temp_name,
+              File::FLAG_CREATE | File::FLAG_READ | File::FLAG_WRITE);
+    if (file.IsValid()) {
+      file.Close();
+      create_file_success = true;
+      break;
+    }
+  }
+
+  if (!create_file_success) {
+    DPLOG(WARNING) << "Failed to get temporary file name in " << dir.value();
+    return false;
+  }
+
+  char long_temp_name[MAX_PATH + 1];
+  DWORD long_name_len =
+      GetLongPathName(temp_name.value().c_str(), long_temp_name, MAX_PATH);
+  if (long_name_len > MAX_PATH || long_name_len == 0) {
+    // GetLongPathName() failed, but we still have a temporary file.
+    *temp_file = std::move(temp_name);
+    return true;
+  }
+
+  absl::string_view long_temp_name_str(long_temp_name, long_name_len);
+  *temp_file = FilePath(long_temp_name_str);
+  return true;
+}
+
+bool CreateTemporaryDirInDir(const FilePath& base_dir,
+                             const std::string& prefix, FilePath* new_dir) {
+  FilePath path_to_create;
+
+  absl::BitGen bitgen;
+  for (int count = 0; count < 50; ++count) {
+    // Try create a new temporary directory with random generated name. If
+    // the one exists, keep trying another path name until we reach some limit.
+    std::string new_dir_name;
+    new_dir_name.assign(prefix);
+    new_dir_name.append(NumberToString(GetCurrentProcId()));
+    new_dir_name.push_back('_');
+    new_dir_name.append(NumberToString(absl::Uniform<int32_t>(
+        bitgen, 0, std::numeric_limits<int32_t>::max())));
+
+    path_to_create = base_dir.Append(new_dir_name);
+    if (::CreateDirectory(path_to_create.value().c_str(), NULL)) {
+      *new_dir = path_to_create;
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool CreateNewTempDirectory(const std::string& prefix,
+                            FilePath* new_temp_path) {
+  FilePath system_temp_dir;
+  if (!GetTempDir(&system_temp_dir)) return false;
+
+  return CreateTemporaryDirInDir(system_temp_dir, prefix, new_temp_path);
+}
+
+bool CreateDirectoryAndGetError(const FilePath& full_path, File::Error* error) {
+  // If the path exists, we've succeeded if it's a directory, failed otherwise.
+  const char* const full_path_str = full_path.value().c_str();
+  const DWORD fileattr = ::GetFileAttributes(full_path_str);
+  if (fileattr != INVALID_FILE_ATTRIBUTES) {
+    if ((fileattr & FILE_ATTRIBUTE_DIRECTORY) != 0) {
+      DVLOG(1) << "CreateDirectory(" << full_path_str << "), "
+               << "directory already exists.";
+      return true;
+    }
+    DLOG(WARNING) << "CreateDirectory(" << full_path_str << "), "
+                  << "conflicts with existing file.";
+    if (error) *error = File::FILE_ERROR_NOT_A_DIRECTORY;
+    ::SetLastError(ERROR_FILE_EXISTS);
+    return false;
+  }
+
+  // Invariant:  Path does not exist as file or directory.
+
+  // Attempt to create the parent recursively.  This will immediately return
+  // true if it already exists, otherwise will create all required parent
+  // directories starting with the highest-level missing parent.
+  FilePath parent_path(full_path.DirName());
+  if (parent_path.value() == full_path.value()) {
+    if (error) *error = File::FILE_ERROR_NOT_FOUND;
+    ::SetLastError(ERROR_FILE_NOT_FOUND);
+    return false;
+  }
+  if (!CreateDirectoryAndGetError(parent_path, error)) {
+    DLOG(WARNING) << "Failed to create one of the parent directories.";
+    DCHECK(!error || *error != File::FILE_OK);
+    return false;
+  }
+
+  if (::CreateDirectory(full_path_str, NULL)) return true;
+
+  const DWORD error_code = ::GetLastError();
+  if (error_code == ERROR_ALREADY_EXISTS && DirectoryExists(full_path)) {
+    // This error code ERROR_ALREADY_EXISTS doesn't indicate whether we were
+    // racing with someone creating the same directory, or a file with the same
+    // path.  If DirectoryExists() returns true, we lost the race to create the
+    // same directory.
+    return true;
+  }
+  if (error) *error = File::OSErrorToFileError(error_code);
+  ::SetLastError(error_code);
+  DPLOG(WARNING) << "Failed to create directory " << full_path_str;
   return false;
 }
 

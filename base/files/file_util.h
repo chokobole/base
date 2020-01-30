@@ -158,6 +158,11 @@ BASE_EXPORT bool ReadFileToStringWithMaxSize(const FilePath& path,
 // Returns true iff |bytes| bytes have been successfully read from |fd|.
 BASE_EXPORT bool ReadFromFD(int fd, char* buffer, size_t bytes);
 
+// Performs the same function as CreateAndOpenTemporaryFileInDir(), but returns
+// the file-descriptor wrapped in a ScopedFD, rather than wrapped in a FILE.
+BASE_EXPORT ScopedFD CreateAndOpenFdForTemporaryFileInDir(const FilePath& dir,
+                                                          FilePath* path);
+
 #endif  // defined(OS_POSIX) || defined(OS_FUCHSIA)
 
 #if defined(OS_POSIX)
@@ -197,10 +202,67 @@ BASE_EXPORT bool GetPosixFilePermissions(const FilePath& path, int* mode);
 // the permission of a file which the symlink points to.
 BASE_EXPORT bool SetPosixFilePermissions(const FilePath& path, int mode);
 
+#if defined(OS_LINUX) || defined(OS_AIX)
+// Determine if files under a given |path| can be mapped and then mprotect'd
+// PROT_EXEC. This depends on the mount options used for |path|, which vary
+// among different Linux distributions and possibly local configuration. It also
+// depends on details of kernel--ChromeOS uses the noexec option for /dev/shm
+// but its kernel allows mprotect with PROT_EXEC anyway.
+BASE_EXPORT bool IsPathExecutable(const FilePath& path);
+#endif  // OS_LINUX || OS_AIX
+
 #endif  // OS_POSIX
 
 // Returns true if the given directory is empty
 BASE_EXPORT bool IsDirectoryEmpty(const FilePath& dir_path);
+
+// Get the temporary directory provided by the system.
+//
+// WARNING: In general, you should use CreateTemporaryFile variants below
+// instead of this function. Those variants will ensure that the proper
+// permissions are set so that other users on the system can't edit them while
+// they're open (which can lead to security issues).
+BASE_EXPORT bool GetTempDir(FilePath* path);
+
+// Get the home directory. This is more complicated than just getenv("HOME")
+// as it knows to fall back on getpwent() etc.
+//
+// You should not generally call this directly. Instead use DIR_HOME with the
+// path service which will use this function but cache the value.
+// Path service may also override DIR_HOME.
+BASE_EXPORT FilePath GetHomeDir();
+
+// Creates a temporary file. The full path is placed in |path|, and the
+// function returns true if was successful in creating the file. The file will
+// be empty and all handles closed after this function returns.
+BASE_EXPORT bool CreateTemporaryFile(FilePath* path);
+
+// Same as CreateTemporaryFile but the file is created in |dir|.
+BASE_EXPORT bool CreateTemporaryFileInDir(const FilePath& dir,
+                                          FilePath* temp_file);
+
+// Create and open a temporary file.  File is opened for read/write.
+// The full path is placed in |path|.
+// Returns a handle to the opened file or NULL if an error occurred.
+BASE_EXPORT FILE* CreateAndOpenTemporaryFile(FilePath* path);
+
+// Similar to CreateAndOpenTemporaryFile, but the file is created in |dir|.
+BASE_EXPORT FILE* CreateAndOpenTemporaryFileInDir(const FilePath& dir,
+                                                  FilePath* path);
+
+// Create a new directory. If prefix is provided, the new directory name is in
+// the format of prefixyyyy.
+// NOTE: prefix is ignored in the POSIX implementation.
+// If success, return true and output the full path of the directory created.
+BASE_EXPORT bool CreateNewTempDirectory(const std::string& prefix,
+                                        FilePath* new_temp_path);
+
+// Create a directory within another directory.
+// Extra characters will be appended to |prefix| to ensure that the
+// new directory does not have the same name as an existing directory.
+BASE_EXPORT bool CreateTemporaryDirInDir(const FilePath& base_dir,
+                                         const std::string& prefix,
+                                         FilePath* new_dir);
 
 // Creates a directory, as well as creating any parent directories, if they
 // don't exist. Returns 'true' on successful creation, or if the directory
@@ -255,6 +317,14 @@ BASE_EXPORT int WriteFile(const FilePath& filename, const char* data, int size);
 // Appends |data| to |fd|. Does not close |fd| when done.  Returns true iff
 // |size| bytes of |data| were written to |fd|.
 BASE_EXPORT bool WriteFileDescriptor(const int fd, const char* data, int size);
+
+// Allocates disk space for the file referred to by |fd| for the byte range
+// starting at |offset| and continuing for |size| bytes. The file size will be
+// changed if |offset|+|len| is greater than the file size. Zeros will fill the
+// new space.
+// After a successful call, subsequent writes into the specified range are
+// guaranteed not to fail because of lack of disk space.
+BASE_EXPORT bool AllocateFileRegion(File* file, int64_t offset, size_t size);
 #endif
 
 // Appends |data| to |filename|.  Returns true iff |size| bytes of |data| were
@@ -294,6 +364,12 @@ BASE_EXPORT bool CreateLocalNonBlockingPipe(int fds[2]);
 // false.
 BASE_EXPORT bool SetCloseOnExec(int fd);
 
+// Get a temporary directory for shared memory files. The directory may depend
+// on whether the destination is intended for executable files, which in turn
+// depends on how /dev/shmem was mounted. As a result, you must supply whether
+// you intend to create executable shmem segments so this function can find
+// an appropriate location.
+BASE_EXPORT bool GetShmemTempDir(bool executable, FilePath* path);
 #endif  // defined(OS_POSIX) || defined(OS_FUCHSIA)
 
 // Internal --------------------------------------------------------------------

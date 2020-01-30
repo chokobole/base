@@ -81,15 +81,26 @@ base_cc_library(
         "//base/time:time_util",
     ] + if_mac([
         ":file_util_mac",
-    ]),
+    ]) + if_windows(
+        [
+            "//base:guid",
+            "//base/process:process_handle",
+            "//base/strings",
+        ],
+        [
+            "//base:bits",
+        ],
+    ),
 )
 
 base_objc_library(
     name = "file_util_mac",
     srcs = if_mac(["file_util_mac.mm"]),
     hdrs = FILE_UTIL_HDRS,
-    tags = ["objc"],
-    deps = [":file"],
+    deps = [
+        ":file",
+        "//base/mac:foundation_util",
+    ],
 )
 
 base_cc_library(

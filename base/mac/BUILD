@@ -1,5 +1,13 @@
-load("//bazel:base_cc.bzl", "base_cc_library", "base_cc_test")
+load("//bazel:base_cc.bzl", "base_cc_library", "base_cc_test", "base_objc_library")
 load("@com_chokobole_bazel_utils//:conditions.bzl", "if_mac")
+
+base_objc_library(
+    name = "foundation_util",
+    srcs = if_mac(["foundation_util.mm"]),
+    hdrs = ["foundation_util.h"],
+    visibility = ["//visibility:public"],
+    deps = ["//base/files:file_path"],
+)
 
 base_cc_library(
     name = "mach_logging",

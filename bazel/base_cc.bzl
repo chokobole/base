@@ -39,10 +39,12 @@ def base_cc_library(
 def base_objc_library(
         name,
         copts = base_cxxopts(),
+        tags = ["objc"],
         **kwargs):
     native.objc_library(
         name = name,
         copts = copts,
+        tags = tags,
         **kwargs
     )
 

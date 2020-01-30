@@ -8,15 +8,21 @@
 
 #include "base/files/file_util.h"
 
+#include <dirent.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
 #include <stack>
 
+#include "absl/strings/str_format.h"
+#include "base/bits.h"
 #include "base/files/file_enumerator.h"
 #include "base/logging.h"
 #include "base/posix/eintr_wrapper.h"
@@ -25,6 +31,8 @@
 namespace base {
 
 namespace {
+
+std::string TempFileName() { return ".com.chokobole.base.XXXXXX"; }
 
 bool AdvanceEnumeratorWithStat(FileEnumerator* traversal,
                                FilePath* out_next_path,
@@ -347,6 +355,16 @@ bool ReadFromFD(int fd, char* buffer, size_t bytes) {
   return total_read == bytes;
 }
 
+ScopedFD CreateAndOpenFdForTemporaryFileInDir(const FilePath& directory,
+                                              FilePath* path) {
+  *path = directory.Append(TempFileName());
+  const std::string& tmpdir_string = path->value();
+  // this should be OK since mkstemp just replaces characters in place
+  char* buffer = const_cast<char*>(tmpdir_string.c_str());
+
+  return ScopedFD(HANDLE_EINTR(mkstemp(buffer)));
+}
+
 #if !defined(OS_FUCHSIA)
 bool CreateSymbolicLink(const FilePath& target_path,
                         const FilePath& symlink_path) {
@@ -400,6 +418,107 @@ bool SetPosixFilePermissions(const FilePath& path, int mode) {
   return true;
 }
 #endif  // !OS_FUCHSIA
+
+#if !defined(OS_MACOSX)
+// This is implemented in file_util_mac.mm for Mac.
+bool GetTempDir(FilePath* path) {
+  const char* tmp = getenv("TMPDIR");
+  if (tmp) {
+    *path = FilePath(tmp);
+    return true;
+  }
+
+#if defined(OS_ANDROID)
+  return PathService::Get(DIR_CACHE, path);
+#else
+  *path = FilePath("/tmp");
+  return true;
+#endif
+}
+#endif  // !defined(OS_MACOSX)
+
+#if !defined(OS_MACOSX)  // Mac implementation is in file_util_mac.mm.
+FilePath GetHomeDir() {
+#if defined(OS_CHROMEOS)
+  if (SysInfo::IsRunningOnChromeOS()) {
+    // On Chrome OS chrome::DIR_USER_DATA is overridden with a primary user
+    // homedir once it becomes available. Return / as the safe option.
+    return FilePath("/");
+  }
+#endif
+
+  const char* home_dir = getenv("HOME");
+  if (home_dir && home_dir[0]) return FilePath(home_dir);
+
+#if defined(OS_ANDROID)
+  DLOG(WARNING) << "OS_ANDROID: Home directory lookup not yet implemented.";
+#endif
+
+  FilePath rv;
+  if (GetTempDir(&rv)) return rv;
+
+  // Last resort.
+  return FilePath("/tmp");
+}
+#endif  // !defined(OS_MACOSX)
+
+bool CreateTemporaryFile(FilePath* path) {
+  // For call to close() inside ScopedFD.
+  FilePath directory;
+  if (!GetTempDir(&directory)) return false;
+  ScopedFD fd = CreateAndOpenFdForTemporaryFileInDir(directory, path);
+  return fd.is_valid();
+}
+
+FILE* CreateAndOpenTemporaryFileInDir(const FilePath& dir, FilePath* path) {
+  ScopedFD scoped_fd = CreateAndOpenFdForTemporaryFileInDir(dir, path);
+  if (!scoped_fd.is_valid()) return nullptr;
+
+  int fd = scoped_fd.release();
+  FILE* file = fdopen(fd, "a+");
+  if (!file) close(fd);
+  return file;
+}
+
+bool CreateTemporaryFileInDir(const FilePath& dir, FilePath* temp_file) {
+  ScopedFD fd = CreateAndOpenFdForTemporaryFileInDir(dir, temp_file);
+  return fd.is_valid();
+}
+
+static bool CreateTemporaryDirInDirImpl(const FilePath& base_dir,
+                                        const std::string& name_tmpl,
+                                        FilePath* new_dir) {
+  DCHECK(name_tmpl.find("XXXXXX") != std::string::npos)
+      << "Directory name template must contain \"XXXXXX\".";
+
+  FilePath sub_dir = base_dir.Append(name_tmpl);
+  std::string sub_dir_string = sub_dir.value();
+
+  // this should be OK since mkdtemp just replaces characters in place
+  char* buffer = const_cast<char*>(sub_dir_string.c_str());
+  char* dtemp = mkdtemp(buffer);
+  if (!dtemp) {
+    DPLOG(ERROR) << "mkdtemp";
+    return false;
+  }
+  *new_dir = FilePath(dtemp);
+  return true;
+}
+
+bool CreateTemporaryDirInDir(const FilePath& base_dir,
+                             const std::string& prefix, FilePath* new_dir) {
+  std::string mkdtemp_template = prefix;
+  mkdtemp_template.append("XXXXXX");
+  return CreateTemporaryDirInDirImpl(base_dir, mkdtemp_template, new_dir);
+}
+
+bool CreateNewTempDirectory(const std::string& prefix,
+                            FilePath* new_temp_path) {
+  FilePath tmpdir;
+  if (!GetTempDir(&tmpdir)) return false;
+
+  return CreateTemporaryDirInDirImpl(tmpdir, TempFileName(), new_temp_path);
+}
 
 bool CreateDirectoryAndGetError(const FilePath& full_path, File::Error* error) {
   std::vector<FilePath> subpaths;
@@ -520,6 +639,78 @@ bool WriteFileDescriptor(const int fd, const char* data, int size) {
   return true;
 }
 
+bool AllocateFileRegion(File* file, int64_t offset, size_t size) {
+  DCHECK(file);
+
+  // Explicitly extend |file| to the maximum size. Zeros will fill the new
+  // space. It is assumed that the existing file is fully realized as
+  // otherwise the entire file would have to be read and possibly written.
+  const int64_t original_file_len = file->GetLength();
+  if (original_file_len < 0) {
+    DPLOG(ERROR) << "fstat " << file->GetPlatformFile();
+    return false;
+  }
+
+  // Increase the actual length of the file, if necessary. This can fail if
+  // the disk is full and the OS doesn't support sparse files.
+  const int64_t new_file_len = offset + size;
+  if (!file->SetLength(std::max(original_file_len, new_file_len))) {
+    DPLOG(ERROR) << "ftruncate " << file->GetPlatformFile();
+    return false;
+  }
+
+  // Realize the extent of the file so that it can't fail (and crash) later
+  // when trying to write to a memory page that can't be created. This can
+  // fail if the disk is full and the file is sparse.
+
+  // First try the more effective platform-specific way of allocating the disk
+  // space. It can fail because the filesystem doesn't support it. In that case,
+  // use the manual method below.
+
+#if defined(OS_LINUX)
+  if (HANDLE_EINTR(fallocate(file->GetPlatformFile(), 0, offset, size)) != -1)
+    return true;
+  DPLOG(ERROR) << "fallocate";
+#elif defined(OS_MACOSX)
+  // MacOS doesn't support fallocate even though their new APFS filesystem
+  // does support sparse files. It does, however, have the functionality
+  // available via fcntl.
+  // See also: https://openradar.appspot.com/32720223
+  fstore_t params = {F_ALLOCATEALL, F_PEOFPOSMODE, offset,
+                     static_cast<off_t>(size), 0};
+  if (fcntl(file->GetPlatformFile(), F_PREALLOCATE, &params) != -1) return true;
+  DPLOG(ERROR) << "F_PREALLOCATE";
+#endif
+
+  // Manually realize the extended file by writing bytes to it at intervals.
+  int64_t block_size = 512;  // Start with something safe.
+  stat_wrapper_t statbuf;
+  if (File::Fstat(file->GetPlatformFile(), &statbuf) == 0 &&
+      statbuf.st_blksize > 0 && base::bits::IsPowerOfTwo(statbuf.st_blksize)) {
+    block_size = statbuf.st_blksize;
+  }
+
+  // Write starting at the next block boundary after the old file length.
+  const int64_t extension_start =
+      base::bits::Align(original_file_len, block_size);
+  for (int64_t i = extension_start; i < new_file_len; i += block_size) {
+    char existing_byte;
+    if (HANDLE_EINTR(pread(file->GetPlatformFile(), &existing_byte, 1, i)) !=
+        1) {
+      return false;  // Can't read? Not viable.
+    }
+    if (existing_byte != 0) {
+      continue;  // Block has data so must already exist.
+    }
+    if (HANDLE_EINTR(pwrite(file->GetPlatformFile(), &existing_byte, 1, i)) !=
+        1) {
+      return false;  // Can't write? Not viable.
+    }
+  }
+
+  return true;
+}
+
 bool AppendToFile(const FilePath& filename, const char* data, int size) {
   bool ret = true;
   int fd = HANDLE_EINTR(open(filename.value().c_str(), O_WRONLY | O_APPEND));
@@ -556,6 +747,25 @@ bool GetCurrentDirectory(FilePath* dir) {
 bool SetCurrentDirectory(const FilePath& path) {
   return chdir(path.value().c_str()) == 0;
 }
+
+#if !defined(OS_ANDROID)
+// This is implemented in file_util_android.cc for that platform.
+bool GetShmemTempDir(bool executable, FilePath* path) {
+#if defined(OS_LINUX) || defined(OS_AIX)
+  bool use_dev_shm = true;
+  if (executable) {
+    static const bool s_dev_shm_executable =
+        IsPathExecutable(FilePath("/dev/shm"));
+    use_dev_shm = s_dev_shm_executable;
+  }
+  if (use_dev_shm) {
+    *path = FilePath("/dev/shm");
+    return true;
+  }
+#endif  // defined(OS_LINUX) || defined(OS_AIX)
+  return GetTempDir(path);
+}
+#endif  // !defined(OS_ANDROID)
 
 #if !defined(OS_MACOSX)
 // Mac has its own implementation, this is for all other Posix systems.
@@ -605,5 +815,28 @@ bool MoveUnsafe(const FilePath& from_path, const FilePath& to_path) {
 }
 
 }  // namespace internal
+
+#if defined(OS_LINUX) || defined(OS_AIX)
+BASE_EXPORT bool IsPathExecutable(const FilePath& path) {
+  bool result = false;
+  FilePath tmp_file_path;
+
+  ScopedFD fd = CreateAndOpenFdForTemporaryFileInDir(path, &tmp_file_path);
+  if (fd.is_valid()) {
+    DeleteFile(tmp_file_path);
+    long sysconf_result = sysconf(_SC_PAGESIZE);
+    CHECK_GE(sysconf_result, 0);
+    size_t pagesize = static_cast<size_t>(sysconf_result);
+    CHECK_GE(sizeof(pagesize), sizeof(sysconf_result));
+    void* mapping = mmap(nullptr, pagesize, PROT_READ, MAP_SHARED, fd.get(), 0);
+    if (mapping != MAP_FAILED) {
+      if (mprotect(mapping, pagesize, PROT_READ | PROT_EXEC) == 0)
+        result = true;
+      munmap(mapping, pagesize);
+    }
+  }
+  return result;
+}
+#endif  // defined(OS_LINUX) || defined(OS_AIX)
 
 }  // namespace base
