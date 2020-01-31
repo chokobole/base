@@ -43,6 +43,8 @@ base/socket/address_family.h:
 
 base/auto_reset.h:
 base/callback_forward.h:
+base/environment.h:
+base/environment_unittest.cc:
 base/io_buffer.cc:
 base/stl_util.h:
 base/template_util.h:
@@ -74,6 +76,7 @@ base/thread/thread_local.h:
 base/build_config.h:
 base/callback.h:
 base/compiler_specific.h:
+base/environment.cc:
 base/io_buffer.h:
 base/sys_byteorder.h:
 base/containers/stack_container.h:

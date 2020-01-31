@@ -61,6 +61,18 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "environment",
+    srcs = ["environment.cc"],
+    hdrs = ["environment.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":build_config",
+        ":export",
+        "@com_google_absl//absl/strings",
+    ],
+)
+
+base_cc_library(
     name = "export",
     hdrs = ["export.h"],
     visibility = ["//visibility:public"],
@@ -190,6 +202,7 @@ base_cc_test(
         "auto_reset_unittest.cc",
         "bits_unittest.cc",
         "data_view_unittest.cc",
+        "environment_unittest.cc",
         "scoped_generic_unittest.cc",
         "sys_byteorder_unittest.cc",
     ],
@@ -197,6 +210,7 @@ base_cc_test(
         ":auto_reset",
         ":bits",
         ":data_view",
+        ":environment",
         ":scoped_generic",
         ":stl_util",
         ":sys_byteorder",
