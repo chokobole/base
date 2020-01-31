@@ -86,6 +86,20 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "guid",
+    srcs = ["guid.cc"],
+    hdrs = ["guid.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":build_config",
+        ":export",
+        "@com_google_absl//absl/random",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/strings:str_format",
+    ],
+)
+
+base_cc_library(
     name = "logging",
     hdrs = ["logging.h"],
     visibility = ["//visibility:public"],
@@ -203,6 +217,7 @@ base_cc_test(
         "bits_unittest.cc",
         "data_view_unittest.cc",
         "environment_unittest.cc",
+        "guid_unittest.cc",
         "scoped_generic_unittest.cc",
         "sys_byteorder_unittest.cc",
     ],
@@ -211,6 +226,7 @@ base_cc_test(
         ":bits",
         ":data_view",
         ":environment",
+        ":guid",
         ":scoped_generic",
         ":stl_util",
         ":sys_byteorder",
