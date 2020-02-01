@@ -8,6 +8,12 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "scoped_policy",
+    hdrs = ["scoped_policy.h"],
+    visibility = ["//visibility:public"],
+)
+
+base_cc_library(
     name = "shared_memory",
     srcs = [
         "platform_shared_memory_region.cc",

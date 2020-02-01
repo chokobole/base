@@ -10,6 +10,8 @@
 
 namespace base {
 
+bool IsStringASCII(absl::string_view text);
+
 enum class CompareCase {
   SENSITIVE_ASCII,
   INSENSITIVE_ASCII,

@@ -4,18 +4,26 @@
 
 #include "base/strings/string_util.h"
 
+#include <algorithm>
+
 #include "absl/strings/ascii.h"
 #include "base/no_destructor.h"
 
 namespace base {
 
 namespace {
+
 struct CaseInsensitiveCompareASCII {
  public:
   bool operator()(char x, char y) const {
     return absl::ascii_toupper(x) == absl::ascii_toupper(y);
   }
 };
+
+}  // namespace
+
+bool IsStringASCII(absl::string_view text) {
+  return std::all_of(text.begin(), text.end(), absl::ascii_isascii);
 }
 
 bool StartsWith(absl::string_view text, absl::string_view expected ,CompareCase compare_case) {

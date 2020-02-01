@@ -1,6 +1,7 @@
 load("//bazel:base_cc.bzl", "base_cc_library")
 load("@com_chokobole_bazel_utils//:conditions.bzl", "if_linux", "if_windows")
 
+# TODO: Should deal with process_handle_fuchsia.cc and process_handle_openbsd.cc
 base_cc_library(
     name = "process_handle",
     srcs = ["process_handle.cc"] + select({

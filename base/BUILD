@@ -1,4 +1,4 @@
-load("//bazel:base_cc.bzl", "base_cc_library", "base_cc_test")
+load("//bazel:base_cc.bzl", "base_cc_library", "base_cc_test", "base_objc_library")
 
 package_group(
     name = "internal",
@@ -122,6 +122,55 @@ base_cc_library(
     name = "macros",
     hdrs = ["macros.h"],
     visibility = ["//visibility:public"],
+)
+
+NATIVE_LIBRARY_HDRS = ["native_library.h"]
+
+# TODO: Should deal with native_library_fuchsia.cc
+base_cc_library(
+    name = "native_library",
+    srcs = [
+        "native_library.cc",
+        "scoped_native_library.cc",
+    ] + select({
+        "@com_chokobole_bazel_utils//:ios": [],
+        "@com_chokobole_bazel_utils//:mac": [],
+        "@com_chokobole_bazel_utils//:windows": ["native_library_win.cc"],
+        "//conditions:default": ["native_library_posix.cc"],
+    }),
+    hdrs = NATIVE_LIBRARY_HDRS + [
+        "scoped_native_library.h",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":scoped_generic",
+        "//base/files:file_path",
+    ] + select({
+        "@com_chokobole_bazel_utils//:ios": [":native_library_ios"],
+        "@com_chokobole_bazel_utils//:mac": [":native_library_mac"],
+        "@com_chokobole_bazel_utils//:windows": [
+            "//base/files:file_util",
+            "//base/strings",
+        ],
+        "//conditions:default": [],
+    }),
+)
+
+base_objc_library(
+    name = "native_library_ios",
+    srcs = ["native_library_ios.mm"],
+    hdrs = NATIVE_LIBRARY_HDRS,
+    deps = ["//base/files:file_path"],
+)
+
+base_objc_library(
+    name = "native_library_mac",
+    srcs = ["native_library_mac.mm"],
+    hdrs = NATIVE_LIBRARY_HDRS,
+    deps = [
+        "//base/files:file_util",
+        "//base/mac:scoped_cftyperef",
+    ],
 )
 
 base_cc_library(

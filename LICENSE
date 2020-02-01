@@ -46,6 +46,10 @@ base/callback_forward.h:
 base/environment.h:
 base/environment_unittest.cc:
 base/io_buffer.cc:
+base/native_library.h:
+base/native_library_mac.mm:
+base/native_library_posix.cc:
+base/native_library_win.cc:
 base/stl_util.h:
 base/template_util.h:
 base/files/file.cc:
@@ -99,8 +103,10 @@ base/files/file_util_win.cc:
 base/files/file_win.cc:
 base/mac/foundation_util.h:
 base/mac/foundation_util.mm:
+base/mac/scoped_cftyperef.h:
 base/mac/scoped_mach_port.cc:
 base/mac/scoped_mach_port.h:
+base/memory/scoped_policy.h:
 base/posix/eint_wrapper.h:
 base/process/internal_aix.cc:
 base/process/internal_linux.cc:
@@ -154,6 +160,7 @@ base/files/scoped_file.cc:
 base/files/scoped_file.h:
 base/mac/mach_logging.cc:
 base/mac/mach_logging.h:
+base/mac/scoped_typeref.h:
 base/mac/scoped_mach_vm.cc:
 base/mac/scoped_mach_vm.h:
 base/numerics/safe_conversions.h:
@@ -175,6 +182,7 @@ base/socket/ip_address.h:
 base/socket/ip_address_unittest.cc:
   Copyright (c) 2015 The Chromium Authors.
 
+base/native_library_ios.mm:
 base/socket/address_family.cc:
 base/socket/diff_serv_code_point.h:
   Copyright 2015 The Chromium Authors.
@@ -183,6 +191,7 @@ base/sys_byteorder_unittest.cc:
 base/memory/free_deleter.h:
   Copyright (c) 2016 The Chromium Authors.
 
+base/native_library.cc:
 base/unguessable_token.cc:
 base/unguessable_token.h:
 base/sockaddr_storage.cc:

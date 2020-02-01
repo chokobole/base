@@ -22,6 +22,13 @@ base_cc_library(
     ],
 )
 
+base_objc_library(
+    name = "scoped_cftyperef",
+    hdrs = ["scoped_cftyperef.h"],
+    visibility = ["//visibility:public"],
+    deps = [":scoped_typeref"],
+)
+
 base_cc_library(
     name = "scoped_mach_port",
     srcs = if_mac(["scoped_mach_port.cc"]),
@@ -40,6 +47,17 @@ base_cc_library(
     hdrs = ["scoped_mach_vm.h"],
     visibility = ["//visibility:public"],
     deps = [":mach_logging"],
+)
+
+base_objc_library(
+    name = "scoped_typeref",
+    hdrs = ["scoped_typeref.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//base:compiler_specific",
+        "//base:logging",
+        "//base/memory:scoped_policy",
+    ],
 )
 
 base_cc_test(
