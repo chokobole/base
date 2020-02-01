@@ -8,11 +8,13 @@
 #include <windows.h>
 
 namespace base {
+namespace win {
 
 // static
-bool CloseHandle(HANDLE handle) {
+bool HandleTraits::CloseHandle(HANDLE handle) {
   if (!::CloseHandle(handle)) CHECK(false);  // CloseHandle failed.
   return true;
 }
 
+}  // namespace win
 }  // namespace base
