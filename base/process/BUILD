@@ -1,5 +1,15 @@
-load("//bazel:base_cc.bzl", "base_cc_library")
+load("//bazel:base_cc.bzl", "base_cc_library", "base_cc_test")
 load("@com_chokobole_bazel_utils//:conditions.bzl", "if_linux", "if_mac", "if_windows")
+
+base_cc_library(
+    name = "environment_internal",
+    srcs = ["environment_internal.cc"],
+    hdrs = ["environment_internal.h"],
+    deps = [
+        "//base:environment",
+        "//base:logging",
+    ],
+)
 
 base_cc_library(
     name = "port_provider_mac",
@@ -82,5 +92,14 @@ base_cc_library(
         "//base/files:file_util",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/time",
+    ],
+)
+
+base_cc_test(
+    name = "process_unittests",
+    srcs = ["environment_internal_unittest.cc"],
+    deps = [
+        ":environment_internal",
+        "@com_google_googletest//:gtest_main",
     ],
 )

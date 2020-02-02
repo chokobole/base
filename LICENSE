@@ -250,7 +250,10 @@ base/socket/transport_client_socket.h:
 base/socket/datagram_buffer.h:
   Copyright (c) 2018 The Chromium Authors.
 
-base/immediate_crash.h:
 base/auto_reset_unittest.cc:
+base/immediate_crash.h:
 base/mac/scoped_mach_vm_unittest.cc:
+base/process/environment_internal.cc:
+base/process/environment_internal.h:
+base/process/environment_internal_unittest.cc:
   Copyright 2019 The Chromium Authors.
