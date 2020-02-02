@@ -5,6 +5,7 @@
 #ifndef BASE_LOGGING_H_
 #define BASE_LOGGING_H_
 
+#include "base/immediate_crash.h"
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #include "glog/logging.h"
 
@@ -18,6 +19,8 @@
 #define VPLOG(verboselevel) PLOG_IF(INFO, VLOG_IS_ON(verboselevel))
 
 #define DPLOG(severity) LAZY_STREAM(PLOG(severity), DCHECK_IS_ON())
+
+#define DPCHECK(condition) LAZY_STREAM(PCHECK(condition), DCHECK_IS_ON())
 
 #if DCHECK_IS_ON()
 

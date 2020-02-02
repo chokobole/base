@@ -103,7 +103,16 @@ base_cc_library(
     name = "logging",
     hdrs = ["logging.h"],
     visibility = ["//visibility:public"],
-    deps = ["@com_github_google_glog//:glog"],
+    deps = [
+        ":immediate_crash",
+        "@com_github_google_glog//:glog",
+    ],
+)
+
+base_cc_library(
+    name = "immediate_crash",
+    hdrs = ["immediate_crash.h"],
+    deps = [":build_config"],
 )
 
 base_cc_library(
