@@ -15,6 +15,10 @@
 
 namespace base {
 
+#if defined(OS_MACOSX) && !defined(OS_IOS)
+BASE_EXPORT absl::Time FromMachAbsoluteTime(uint64_t mach_absolute_time);
+#endif
+
 #if defined(OS_WIN)
 BASE_EXPORT FILETIME ToFileTime(absl::Time t);
 BASE_EXPORT absl::Time FromFileTime(FILETIME t);
