@@ -60,7 +60,7 @@ bool PlatformSharedMemoryRegion::MapAt(off_t offset, size_t size, void** memory,
 
 std::ostream& operator<<(std::ostream& out,
                          PlatformSharedMemoryRegion::Mode mode) {
-  out << mode;
+  out << static_cast<int>(mode);
   return out;
 }
 
