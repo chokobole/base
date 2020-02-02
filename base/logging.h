@@ -8,6 +8,7 @@
 #include "base/immediate_crash.h"
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #include "glog/logging.h"
+#include "glog/raw_logging.h"
 
 // Helper macro which avoids evaluating the arguments to a stream if
 // the condition doesn't hold. Condition is evaluated once and only once.

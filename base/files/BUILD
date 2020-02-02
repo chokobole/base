@@ -1,5 +1,20 @@
 load("//bazel:base_cc.bzl", "base_cc_library", "base_cc_test", "base_objc_library")
-load("@com_chokobole_bazel_utils//:conditions.bzl", "if_android", "if_mac", "if_posix", "if_windows")
+load("@com_chokobole_bazel_utils//:conditions.bzl", "if_android", "if_linux", "if_mac", "if_posix", "if_windows")
+
+base_cc_library(
+    name = "dir_reader_posix",
+    hdrs = ["dir_reader_posix.h"] + select({
+        "@com_chokobole_bazel_utils//:android": ["dir_reader_linux.h"],
+        "@com_chokobole_bazel_utils//:linux": ["dir_reader_linux.h"],
+        "//conditions:default": ["dir_reader_fallback.h"],
+    }),
+    visibility = ["//visibility:public"],
+    deps = [
+        "//base:build_config",
+        "//base:logging",
+        "//base/posix:eintr_wrapper",
+    ],
+)
 
 base_cc_library(
     name = "file",
