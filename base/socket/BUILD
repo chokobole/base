@@ -1,5 +1,5 @@
 load("//bazel:base_cc.bzl", "base_cc_library", "base_cc_test")
-load("@com_chokobole_bazel_utils//:conditions.bzl", "if_windows")
+load("@com_chokobole_bazel_utils//:conditions.bzl", "if_posix", "if_windows")
 
 base_cc_library(
     name = "address_family",
@@ -83,20 +83,12 @@ base_cc_library(
 
 base_cc_library(
     name = "socket_posix",
-    srcs = if_windows(
-        [
-        ],
-        [
-            "socket_posix.cc",
-        ],
-    ),
-    hdrs = if_windows(
-        [
-        ],
-        [
-            "socket_posix.h",
-        ],
-    ),
+    srcs = if_posix([
+        "socket_posix.cc",
+    ]),
+    hdrs = if_posix([
+        "socket_posix.h",
+    ]),
     deps = [
         ":ip_endpoint",
         ":sockaddr_storage",
@@ -156,14 +148,11 @@ base_cc_library(
 
 base_cc_library(
     name = "socket_errors",
-    srcs = ["socket_errors.cc"] + if_windows(
-        [
-            "socket_errors_win.cc",
-        ],
-        [
-            "socket_errors_posix.cc",
-        ],
-    ),
+    srcs = ["socket_errors.cc"] + if_windows([
+        "socket_errors_win.cc",
+    ]) + if_posix([
+        "socket_errors_posix.cc",
+    ]),
     hdrs = [
         "socket_error_list.h",
         "socket_errors.h",
@@ -209,25 +198,17 @@ base_cc_library(
 
 base_cc_library(
     name = "tcp_socket",
-    srcs = if_windows(
-        [
-        ],
-        [
-            "tcp_client_socket.cc",
-            "tcp_server_socket.cc",
-            "tcp_socket_posix.cc",
-        ],
-    ),
-    hdrs = if_windows(
-        [
-        ],
-        [
-            "tcp_client_socket.h",
-            "tcp_server_socket.h",
-            "tcp_socket.h",
-            "tcp_socket_posix.h",
-        ],
-    ),
+    srcs = if_posix([
+        "tcp_client_socket.cc",
+        "tcp_server_socket.cc",
+        "tcp_socket_posix.cc",
+    ]),
+    hdrs = if_posix([
+        "tcp_client_socket.h",
+        "tcp_server_socket.h",
+        "tcp_socket.h",
+        "tcp_socket_posix.h",
+    ]),
     visibility = ["//visibility:public"],
     deps = [
         ":address_list",
@@ -249,25 +230,17 @@ base_cc_library(
 
 base_cc_library(
     name = "udp_socket",
-    srcs = if_windows(
-        [
-        ],
-        [
-            "udp_client_socket.cc",
-            "udp_server_socket.cc",
-            "udp_socket_posix.cc",
-        ],
-    ),
-    hdrs = if_windows(
-        [
-        ],
-        [
-            "udp_client_socket.h",
-            "udp_server_socket.h",
-            "udp_socket.h",
-            "udp_socket_posix.h",
-        ],
-    ),
+    srcs = if_posix([
+        "udp_client_socket.cc",
+        "udp_server_socket.cc",
+        "udp_socket_posix.cc",
+    ]),
+    hdrs = if_posix([
+        "udp_client_socket.h",
+        "udp_server_socket.h",
+        "udp_socket.h",
+        "udp_socket_posix.h",
+    ]),
     visibility = ["//visibility:public"],
     deps = [
         ":datagram_socket",
@@ -280,22 +253,14 @@ base_cc_library(
 
 base_cc_library(
     name = "unix_domain_socket",
-    srcs = if_windows(
-        [
-        ],
-        [
-            "unix_domain_client_socket_posix.cc",
-            "unix_domain_server_socket_posix.cc",
-        ],
-    ),
-    hdrs = if_windows(
-        [
-        ],
-        [
-            "unix_domain_client_socket_posix.h",
-            "unix_domain_server_socket_posix.h",
-        ],
-    ),
+    srcs = if_posix([
+        "unix_domain_client_socket_posix.cc",
+        "unix_domain_server_socket_posix.cc",
+    ]),
+    hdrs = if_posix([
+        "unix_domain_client_socket_posix.h",
+        "unix_domain_server_socket_posix.h",
+    ]),
     visibility = ["//visibility:public"],
     deps = [
         ":server_socket",

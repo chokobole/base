@@ -1,5 +1,5 @@
 load("//bazel:base_cc.bzl", "base_cc_library", "base_cc_test")
-load("@com_chokobole_bazel_utils//:conditions.bzl", "if_linux", "if_mac", "if_windows")
+load("@com_chokobole_bazel_utils//:conditions.bzl", "if_linux", "if_mac", "if_posix", "if_windows")
 
 base_cc_library(
     name = "environment_internal",
@@ -21,17 +21,13 @@ base_cc_library(
 base_cc_library(
     name = "process",
     srcs = select({
-        "@com_chokobole_bazel_utils//:linux": [
-            "process_posix.cc",
-            "process_linux.cc",
-        ],
-        "@com_chokobole_bazel_utils//:mac": [
-            "process_posix.cc",
-            "process_mac.cc",
-        ],
+        "@com_chokobole_bazel_utils//:linux": ["process_linux.cc"],
+        "@com_chokobole_bazel_utils//:mac": ["process_mac.cc"],
         "@com_chokobole_bazel_utils//:windows": ["process_win.cc"],
-        "//conditions:default": ["process_posix.cc"],
-    }),
+        "//conditions:default": [],
+    }) + if_posix([
+        "process_posix.cc",
+    ]),
     hdrs = ["process.h"],
     deps = [
         ":process_handle",
@@ -40,16 +36,13 @@ base_cc_library(
         ":port_provider_mac",
         "//base/mac:mach_logging",
         "//base/memory:free_deleter",
-    ]) + if_windows(
-        [
-            "//base/numerics:safe_conversions",
-            "//base/time:time_util",
-        ],
-        [
-            "//base/files:scoped_file",
-            "//base/posix:can_lower_nice_to",
-        ],
-    ),
+    ]) + if_windows([
+        "//base/numerics:safe_conversions",
+        "//base/time:time_util",
+    ]) + if_posix([
+        "//base/files:scoped_file",
+        "//base/posix:can_lower_nice_to",
+    ]),
 )
 
 # TODO: Should deal with process_handle_fuchsia.cc and process_handle_openbsd.cc
@@ -61,12 +54,9 @@ base_cc_library(
         "@com_chokobole_bazel_utils//:mac": ["process_handle_mac.cc"],
         "@com_chokobole_bazel_utils//:windows": ["process_handle_win.cc"],
         "//conditions:default": [],
-    }) + if_windows(
-        [],
-        [
-            "process_handle_posix.cc",
-        ],
-    ),
+    }) + if_posix([
+        "process_handle_posix.cc",
+    ]),
     hdrs = ["process_handle.h"],
     visibility = ["//visibility:public"],
     deps = [

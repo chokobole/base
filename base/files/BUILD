@@ -1,16 +1,13 @@
 load("//bazel:base_cc.bzl", "base_cc_library", "base_cc_test", "base_objc_library")
-load("@com_chokobole_bazel_utils//:conditions.bzl", "if_android", "if_mac", "if_windows")
+load("@com_chokobole_bazel_utils//:conditions.bzl", "if_android", "if_mac", "if_posix", "if_windows")
 
 base_cc_library(
     name = "file",
-    srcs = ["file.cc"] + if_windows(
-        [
-            "file_win.cc",
-        ],
-        [
-            "file_posix.cc",
-        ],
-    ),
+    srcs = ["file.cc"] + if_windows([
+        "file_win.cc",
+    ]) + if_posix([
+        "file_posix.cc",
+    ]),
     hdrs = ["file.h"],
     visibility = ["//visibility:public"],
     deps = [
@@ -24,14 +21,11 @@ base_cc_library(
 
 base_cc_library(
     name = "file_enumerator",
-    srcs = ["file_enumerator.cc"] + if_windows(
-        [
-            "file_enumerator_win.cc",
-        ],
-        [
-            "file_enumerator_posix.cc",
-        ],
-    ),
+    srcs = ["file_enumerator.cc"] + if_windows([
+        "file_enumerator_win.cc",
+    ]) + if_posix([
+        "file_enumerator_posix.cc",
+    ]),
     hdrs = ["file_enumerator.h"],
     visibility = ["//visibility:public"],
     deps = [
@@ -64,14 +58,11 @@ FILE_UTIL_HDRS = [
 
 base_cc_library(
     name = "file_util",
-    srcs = if_windows(
-        [
-            "file_util_win.cc",
-        ],
-        [
-            "file_util_posix.cc",
-        ],
-    ),
+    srcs = if_windows([
+        "file_util_win.cc",
+    ]) + if_posix([
+        "file_util_posix.cc",
+    ]),
     hdrs = FILE_UTIL_HDRS,
     visibility = ["//visibility:public"],
     deps = [
@@ -81,16 +72,13 @@ base_cc_library(
         "//base/time:time_util",
     ] + if_mac([
         ":file_util_mac",
-    ]) + if_windows(
-        [
-            "//base:guid",
-            "//base/process:process_handle",
-            "//base/strings",
-        ],
-        [
-            "//base:bits",
-        ],
-    ),
+    ]) + if_windows([
+        "//base:guid",
+        "//base/process:process_handle",
+        "//base/strings",
+    ]) + if_posix([
+        "//base:bits",
+    ]),
 )
 
 base_objc_library(
@@ -126,12 +114,9 @@ base_cc_library(
         "//base:logging",
         "//base:scoped_generic",
         "@com_google_absl//absl/strings",
-    ] + if_windows(
-        [],
-        [
-            "//base/posix:eintr_wrapper",
-        ],
-    ),
+    ] + if_posix([
+        "//base/posix:eintr_wrapper",
+    ]),
 )
 
 base_cc_test(

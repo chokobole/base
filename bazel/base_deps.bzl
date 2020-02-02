@@ -16,10 +16,10 @@ def base_deps():
     if not native.existing_rule("com_chokobole_bazel_utils"):
         http_archive(
             name = "com_chokobole_bazel_utils",
-            strip_prefix = "bazel_utils-bb3362a6bff2547b8232e8e68cd6b05279b31a18",
-            sha256 = "538d8802b3e17d8e11b3c9096962c95698952cc0baa4087359a5c37cb08f8ecc",
+            strip_prefix = "bazel_utils-a4a6c24f630d153fb99f26b5789eb02a661220f2",
+            sha256 = "a3da7898bc587849a7503932d04fb2f7dc6c189d469c62e0af7069c678380dd5",
             urls = [
-                "https://github.com/chokobole/bazel_utils/archive/bb3362a6bff2547b8232e8e68cd6b05279b31a18.tar.gz",
+                "https://github.com/chokobole/bazel_utils/archive/a4a6c24f630d153fb99f26b5789eb02a661220f2.tar.gz",
             ],
         )
 
