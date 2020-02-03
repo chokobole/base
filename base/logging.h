@@ -21,18 +21,15 @@
 
 #define DPLOG(severity) LAZY_STREAM(PLOG(severity), DCHECK_IS_ON())
 
-#define DPCHECK(condition) LAZY_STREAM(PCHECK(condition), DCHECK_IS_ON())
-
 #if DCHECK_IS_ON()
 
+#define DPCHECK(condition) PCHECK(condition)
 #define DVPLOG(verboselevel) VPLOG(verboselevel)
 
 #else  // !DCHECK_IS_ON()
 
-#define DVPLOG(verboselevel)                                \
-  static_cast<void>(0), (true || !VLOG_IS_ON(verboselevel)) \
-                            ? (void)0                       \
-                            : google::LogMessageVoidify() & LOG(INFO)
+#define DPCHECK(condition) static_cast<void>(0), LAZY_STREAM(LOG(INFO), false)
+#define DVPLOG(verboselevel) static_cast<void>(0), LAZY_STREAM(LOG(INFO), false)
 
 #endif
 

@@ -12,6 +12,12 @@
 
 namespace base {
 
+// Contains the set of characters representing whitespace in the corresponding
+// encoding. Null-terminated. The ASCII versions are the whitespaces as defined
+// by HTML5, and don't include control characters.
+BASE_EXPORT extern const wchar_t kWhitespaceWide[];  // Includes Unicode.
+BASE_EXPORT extern const char kWhitespaceASCII[];
+
 BASE_EXPORT bool IsStringASCII(absl::string_view text);
 
 enum class CompareCase {

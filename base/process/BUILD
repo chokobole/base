@@ -12,6 +12,17 @@ base_cc_library(
 )
 
 base_cc_library(
+    name = "internal_linux",
+    srcs = if_linux(["internal_linux.cc"]),
+    hdrs = ["internal_linux.h"],
+    deps = [
+        "//base/files:file_util",
+        "//base/strings",
+        "@com_google_absl//absl/time",
+    ],
+)
+
+base_cc_library(
     name = "port_provider_mac",
     hdrs = ["port_provider_mac.h"],
     deps = [":process_handle"],
@@ -73,16 +84,47 @@ base_cc_library(
     }),
 )
 
+# TODO: Should deal with process_metrics_fuchsia.cc and process_metrics_openbsd.cc
 base_cc_library(
-    name = "internal_linux",
-    srcs = if_linux(["internal_linux.cc"]),
-    hdrs = ["internal_linux.h"],
-    visibility = ["//base:internal"],
-    deps = [
-        "//base/files:file_util",
-        "//base/strings",
-        "@com_google_absl//absl/time",
+    name = "process_metric",
+    srcs = ["process_metrics.cc"] + select({
+        "@com_chokobole_bazel_utils//:freebsd": ["process_metrics_freebsd.cc"],
+        "@com_chokobole_bazel_utils//:linux": ["process_metrics_linux.cc"],
+        "@com_chokobole_bazel_utils//:mac": ["process_metrics_mac.cc"],
+        "@com_chokobole_bazel_utils//:windows": ["process_metrics_win.cc"],
+        "//conditions:default": [],
+    }) + if_posix([
+        "process_metrics_posix.cc",
+    ]),
+    hdrs = [
+        "process_metrics.h",
+        "process_metrics_iocounters.h",
     ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":process_handle",
+        "@com_google_absl//absl/memory",
+    ] + select({
+        "@com_chokobole_bazel_utils//:freebsd": ["//base:stl_util"],
+        "@com_chokobole_bazel_utils//:linux": [
+            ":internal_linux",
+            "//base/files:dir_reader_posix",
+            "//base/files:file_util",
+            "//base/strings",
+            "@com_google_absl//absl/types:optional",
+        ],
+        "@com_chokobole_bazel_utils//:mac": [
+            ":port_provider_mac",
+            "//base/mac:scoped_mach_port",
+            "//base/time:time_util",
+        ],
+        "@com_chokobole_bazel_utils//:windows": [
+            "//base/time:time_util",
+            "//base/win:scoped_handle",
+            "//base/win:windows_types",
+        ],
+        "//conditions:default": [],
+    }),
 )
 
 base_cc_test(
