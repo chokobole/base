@@ -33,10 +33,8 @@ bool StartsWith(absl::string_view text, absl::string_view expected ,CompareCase 
   if (compare_case == CompareCase::SENSITIVE_ASCII) {
     return target == expected;
   } else {
-    return std::equal(
-          expected.begin(), expected.end(),
-          text.begin(),
-          CaseInsensitiveCompareASCII());
+    return std::equal(expected.begin(), expected.end(), target.begin(),
+                      CaseInsensitiveCompareASCII());
   }
 }
 
@@ -48,10 +46,8 @@ bool EndsWith(absl::string_view text, absl::string_view expected, CompareCase co
   if (compare_case == CompareCase::SENSITIVE_ASCII) {
     return target == expected;
   } else {
-    return std::equal(
-          expected.begin(), expected.end(),
-          text.begin(),
-          CaseInsensitiveCompareASCII());
+    return std::equal(expected.begin(), expected.end(), target.begin(),
+                      CaseInsensitiveCompareASCII());
   }
 }
 
@@ -71,11 +67,10 @@ bool ConsumeSuffix(absl::string_view* text, absl::string_view expected, CompareC
   return false;
 }
 
-bool ConsumeASCIIWhitespace(absl::string_view* text,
-                            absl::string_view expected) {
+bool ConsumeASCIIWhitespace(absl::string_view* text) {
   size_t whitespaces = 0;
   while (whitespaces < text->size()) {
-    if (absl::ascii_isascii((*text)[whitespaces])) {
+    if (absl::ascii_isspace((*text)[whitespaces])) {
       whitespaces++;
     } else {
       break;

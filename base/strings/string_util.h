@@ -31,8 +31,7 @@ BASE_EXPORT bool ConsumeSuffix(absl::string_view* text,
                                absl::string_view expected,
                                CompareCase compare_case = CompareCase::SENSITIVE_ASCII);
 
-BASE_EXPORT bool ConsumeASCIIWhitespace(absl::string_view* text,
-                                        absl::string_view expected);
+BASE_EXPORT bool ConsumeASCIIWhitespace(absl::string_view* text);
 
 BASE_EXPORT const std::string& EmptyString();
 
