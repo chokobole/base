@@ -9,6 +9,53 @@
 
 namespace base {
 
+namespace {
+
+void TrimWhitespace(std::vector<std::string>* texts) {
+  std::for_each(texts->begin(), texts->end(),
+                [](std::string& t) { absl::StripAsciiWhitespace(&t); });
+}
+
+void TrimWhitespace(std::vector<absl::string_view>* texts) {
+  std::for_each(texts->begin(), texts->end(), [](absl::string_view& sv) {
+    sv = absl::StripAsciiWhitespace(sv);
+  });
+}
+
+}  // namespace
+
+std::vector<std::string> SplitString(absl::string_view input,
+                                     absl::string_view separators,
+                                     WhitespaceHandling whitespace,
+                                     SplitResult result_type) {
+  std::vector<std::string> result;
+  if (result_type == SplitResult::SPLIT_WANT_NONEMPTY) {
+    result = absl::StrSplit(input, separators, absl::SkipEmpty());
+  } else {
+    result = absl::StrSplit(input, separators);
+  }
+  if (whitespace == WhitespaceHandling::TRIM_WHITESPACE) {
+    TrimWhitespace(&result);
+  }
+  return result;
+}
+
+std::vector<absl::string_view> SplitStringView(absl::string_view input,
+                                               absl::string_view separators,
+                                               WhitespaceHandling whitespace,
+                                               SplitResult result_type) {
+  std::vector<absl::string_view> result;
+  if (result_type == SplitResult::SPLIT_WANT_NONEMPTY) {
+    result = absl::StrSplit(input, separators, absl::SkipEmpty());
+  } else {
+    result = absl::StrSplit(input, separators);
+  }
+  if (whitespace == WhitespaceHandling::TRIM_WHITESPACE) {
+    TrimWhitespace(&result);
+  }
+  return result;
+}
+
 bool SplitStringIntoKeyValuePairs(absl::string_view input,
                                   char key_value_delimiter,
                                   char key_value_pair_delimiter,

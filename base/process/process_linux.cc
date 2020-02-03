@@ -6,8 +6,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "base/process/process.h"
-
 #include <errno.h>
 #include <sys/resource.h>
 
@@ -17,8 +15,10 @@
 #include "base/logging.h"
 #include "base/posix/can_lower_nice_to.h"
 #include "base/process/internal_linux.h"
+#include "base/process/process.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_split.h"
+#include "base/strings/string_util.h"
 
 namespace base {
 
@@ -141,9 +141,13 @@ bool IsProcessBackgroundedCGroup(absl::string_view cgroup_contents) {
   // hierarchy there's an entry in the file. We look for a control group
   // named "/chrome_renderers/background" to determine if the process is
   // backgrounded. crbug.com/548818.
-  std::vector<absl::string_view> lines = absl::StrSplit(cgroup_contents, "\n");
+  std::vector<absl::string_view> lines =
+      SplitStringView(
+      cgroup_contents, "\n", TRIM_WHITESPACE, SPLIT_WANT_NONEMPTY);
+  TrimWhitespace(&lines);
   for (const auto& line : lines) {
-    std::vector<absl::string_view> fields = absl::StrSplit(line, ":");
+    std::vector<absl::string_view> fields =
+        SplitStringPiece(line, ":", TRIM_WHITESPACE, SPLIT_WANT_ALL);
     if (fields.size() != 3U) {
       NOTREACHED();
       continue;
@@ -175,8 +179,8 @@ ProcessId Process::GetPidInNamespace() const {
     const std::string& key = pair.first;
     const std::string& value_str = pair.second;
     if (key == "NSpid") {
-      std::vector<absl::string_view> split_value_str =
-          absl::StrSplit(value_str, "\t");
+      std::vector<absl::string_view> split_value_str = SplitStringPiece(
+          value_str, "\t", TRIM_WHITESPACE, SPLIT_WANT_NONEMPTY);
       if (split_value_str.size() <= 1) {
         return kNullProcessId;
       }

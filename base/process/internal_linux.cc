@@ -16,7 +16,6 @@
 #include <vector>
 
 #include "absl/strings/ascii.h"
-#include "absl/strings/str_split.h"
 #include "base/files/file_util.h"
 #include "base/logging.h"
 #include "base/strings/string_number_conversions.h"
@@ -102,7 +101,8 @@ bool ParseProcStats(absl::string_view stats_data,
 
   // Split the rest.
   std::vector<std::string> other_stats =
-      absl::StrSplit(stats_data.substr(close_parens_idx + 2), " ");
+      SplitString(stats_data.substr(close_parens_idx + 2), " ", TRIM_WHITESPACE,
+                  SPLIT_WANT_ALL);
   for (const auto& i : other_stats) proc_stats->push_back(i);
   return true;
 }
@@ -184,8 +184,8 @@ absl::Duration GetUserCpuTimeSinceBoot() {
   ProcStatMap::const_iterator cpu_it = proc_stat.find("cpu");
   if (cpu_it == proc_stat.end()) return absl::ZeroDuration();
 
-  std::vector<std::string> cpu = absl::StrSplit(cpu_it->second, ' ');
-
+  std::vector<std::string> cpu =
+      SplitString(cpu_it->second, " ", TRIM_WHITESPACE, SPLIT_WANT_NONEMPTY);
   if (cpu.size() < 2 || cpu[0] != "cpu") return absl::ZeroDuration();
 
   uint64_t user;

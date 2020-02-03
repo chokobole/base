@@ -5,12 +5,14 @@
 #ifndef BASE_STRINGS_STRING_H_
 #define BASE_STRINGS_STRING_H_
 
+#include <vector>
+
 #include "absl/strings/string_view.h"
 #include "base/export.h"
 
 namespace base {
 
-bool IsStringASCII(absl::string_view text);
+BASE_EXPORT bool IsStringASCII(absl::string_view text);
 
 enum class CompareCase {
   SENSITIVE_ASCII,

@@ -80,7 +80,7 @@ base_cc_library(
     visibility = ["//base:internal"],
     deps = [
         "//base/files:file_util",
-        "@com_google_absl//absl/strings",
+        "//base/strings",
         "@com_google_absl//absl/time",
     ],
 )
