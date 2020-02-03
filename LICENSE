@@ -159,6 +159,13 @@ base/process/process_handle_linux.cc:
 base/process/process_handle_mac.cc:
 base/process/process_handle_posix.cc:
 base/process/process_handle_win.cc:
+base/process/process_metrics.h:
+base/process/process_metrics_freebsd.cc:
+base/process/process_metrics_linux.cc:
+base/process/process_metrics_mac.cc:
+base/process/process_metrics_openbsd.cc:
+base/process/process_metrics_posix.cc:
+base/process/process_metrics_win.cc:
 base/socket/tcp_client_socket.cc:
   Copyright (c) 2013 The Chromium Authors.
 
@@ -175,6 +182,7 @@ base/mac/scoped_mach_vm.h:
 base/numerics/safe_conversions.h:
 base/numerics/safe_conversions_arm_impl.h:
 base/numerics/safe_conversions_impl.h:
+base/process/process_metrics.cc:
 base/socket/socket_posix.cc:
 base/socket/socket_posix.h:
 base/socket/server_socket.cc:
@@ -244,6 +252,7 @@ base/memory/unsafe_platform_shared_memory_region.cc:
 base/memory/unsafe_platform_shared_memory_region.h:
 base/memory/writable_platform_shared_memory_region.cc:
 base/memory/writable_platform_shared_memory_region.h:
+base/process/process_metrics_iocounters.h:
 base/socket/datagram_buffer.cc:
 base/socket/datagram_buffer_unittest.cc:
 base/socket/transport_client_socket.cc:

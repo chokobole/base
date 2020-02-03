@@ -147,7 +147,7 @@ bool IsProcessBackgroundedCGroup(absl::string_view cgroup_contents) {
   TrimWhitespace(&lines);
   for (const auto& line : lines) {
     std::vector<absl::string_view> fields =
-        SplitStringPiece(line, ":", TRIM_WHITESPACE, SPLIT_WANT_ALL);
+        SplitStringView(line, ":", TRIM_WHITESPACE, SPLIT_WANT_ALL);
     if (fields.size() != 3U) {
       NOTREACHED();
       continue;
@@ -179,7 +179,7 @@ ProcessId Process::GetPidInNamespace() const {
     const std::string& key = pair.first;
     const std::string& value_str = pair.second;
     if (key == "NSpid") {
-      std::vector<absl::string_view> split_value_str = SplitStringPiece(
+      std::vector<absl::string_view> split_value_str = SplitStringView(
           value_str, "\t", TRIM_WHITESPACE, SPLIT_WANT_NONEMPTY);
       if (split_value_str.size() <= 1) {
         return kNullProcessId;

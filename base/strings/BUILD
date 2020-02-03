@@ -6,6 +6,7 @@ base_cc_library(
         "string_number_conversions.cc",
         "string_split.cc",
         "string_util.cc",
+        "string_util_constants.cc",
     ],
     hdrs = [
         "string_number_conversions.h",

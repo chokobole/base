@@ -26,7 +26,8 @@ bool IsStringASCII(absl::string_view text) {
   return std::all_of(text.begin(), text.end(), absl::ascii_isascii);
 }
 
-bool StartsWith(absl::string_view text, absl::string_view expected ,CompareCase compare_case) {
+bool StartsWith(absl::string_view text, absl::string_view expected,
+                CompareCase compare_case) {
   if (text.size() < expected.size()) return false;
 
   absl::string_view target = text.substr(0, expected.size());
@@ -38,7 +39,8 @@ bool StartsWith(absl::string_view text, absl::string_view expected ,CompareCase 
   }
 }
 
-bool EndsWith(absl::string_view text, absl::string_view expected, CompareCase compare_case) {
+bool EndsWith(absl::string_view text, absl::string_view expected,
+              CompareCase compare_case) {
   if (text.size() < expected.size()) return false;
 
   absl::string_view target =
@@ -51,7 +53,8 @@ bool EndsWith(absl::string_view text, absl::string_view expected, CompareCase co
   }
 }
 
-bool ConsumePrefix(absl::string_view* text, absl::string_view expected, CompareCase compare_case) {
+bool ConsumePrefix(absl::string_view* text, absl::string_view expected,
+                   CompareCase compare_case) {
   if (StartsWith(*text, expected, compare_case)) {
     text->remove_prefix(expected.size());
     return true;
@@ -59,7 +62,8 @@ bool ConsumePrefix(absl::string_view* text, absl::string_view expected, CompareC
   return false;
 }
 
-bool ConsumeSuffix(absl::string_view* text, absl::string_view expected, CompareCase compare_case) {
+bool ConsumeSuffix(absl::string_view* text, absl::string_view expected,
+                   CompareCase compare_case) {
   if (EndsWith(*text, expected, compare_case)) {
     text->remove_suffix(expected.size());
     return true;
