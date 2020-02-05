@@ -44,7 +44,7 @@ namespace base {
 // NOTE: It is illegal to send empty UnguessableTokens across processes, and
 // sending/receiving empty tokens should be treated as a security issue. If
 // there is a valid scenario for sending "no token" across processes, use
-// base::Optional instead of an empty token.
+// absl::optional instead of an empty token.
 
 class BASE_EXPORT UnguessableToken {
  public:
