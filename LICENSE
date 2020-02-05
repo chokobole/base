@@ -78,6 +78,8 @@ base/socket/winsock_init.cc:
 base/socket/winsock_init.h:
 base/socket/winsock_util.cc:
 base/socket/winsock_util.h:
+base/system/sys_info_linux.cc:
+base/system/sys_info_posix.cc:
 base/test/scoped_locale.cc:
 base/test/scoped_locale.h:
 base/thread/thread_local.h:
@@ -133,6 +135,8 @@ base/socket/udp_socket_posix.cc:
 base/socket/udp_socket_posix.h:
 base/socket/udp_server_socket.cc:
 base/socket/udp_server_socket.h:
+base/system/sys_info.cc:
+base/system/sys_info.h:
 base/thread/thread_local_storage.h:
 base/thread/thread_local_storage_posix.cc:
 base/thread/thread_local_storage_win.cc:
@@ -203,6 +207,7 @@ base/native_library_ios.mm:
 base/process/port_provider_mac.h:
 base/socket/address_family.cc:
 base/socket/diff_serv_code_point.h:
+base/system/sys_info_win.cc:
   Copyright 2015 The Chromium Authors.
 
 base/sys_byteorder_unittest.cc:
@@ -213,9 +218,10 @@ base/native_library.cc:
 base/unguessable_token.cc:
 base/unguessable_token.h:
 base/process/process_mac.cc:
-base/sockaddr_storage.cc:
-base/sockaddr_storage.h:
+base/socket/sockaddr_storage.cc:
+base/socket/sockaddr_storage.h:
 base/socket/socket_options.cc:
+base/system/sys_info_mac.mm:
   Copyright 2016 The Chromium Authors.
 
 baes/containers/flat_map.h:
