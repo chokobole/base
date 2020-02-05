@@ -86,7 +86,7 @@ base_cc_library(
 
 # TODO: Should deal with process_metrics_fuchsia.cc and process_metrics_openbsd.cc
 base_cc_library(
-    name = "process_metric",
+    name = "process_metrics",
     srcs = ["process_metrics.cc"] + select({
         "@com_chokobole_bazel_utils//:freebsd": ["process_metrics_freebsd.cc"],
         "@com_chokobole_bazel_utils//:linux": ["process_metrics_linux.cc"],
